@@ -16,13 +16,13 @@ import javax.swing.JPanel;
 public class GameVisualizer extends JPanel
 {
     private final Timer m_timer = initTimer();
-    
-    private static Timer initTimer() 
+
+    private static Timer initTimer()
     {
-        Timer timer = new Timer("events generator", true);
-        return timer;
+        return new Timer("events generator", true);
     }
-    
+
+    //можно создать тип колбаса с её данными в качестве поле, аналогично для точки
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100; 
     private volatile double m_robotDirection = 0; 
@@ -100,40 +100,37 @@ public class GameVisualizer extends JPanel
         double velocity = maxVelocity;
         double angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
         double angularVelocity = 0;
+        double angle = asNormalizedRadians(angleToTarget - m_robotDirection);
         if (angleToTarget > m_robotDirection)
         {
             angularVelocity = maxAngularVelocity;
         }
-        if (angleToTarget < m_robotDirection)
+        else if (angleToTarget < m_robotDirection)
         {
             angularVelocity = -maxAngularVelocity;
         }
-        
-        moveRobot(velocity, angularVelocity, 10);
+
+        moveRobot(velocity, angularVelocity, 10, angle);
     }
     
     private static double applyLimits(double value, double min, double max)
     {
-        if (value < min)
-            return min;
-        if (value > max)
-            return max;
-        return value;
+        return Math.min(Math.max(value, min), max);
     }
     
-    private void moveRobot(double velocity, double angularVelocity, double duration)
+    private void moveRobot(double velocity, double angularVelocity, double duration, double angle)
     {
         velocity = applyLimits(velocity, 0, maxVelocity);
         angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
         double newX = m_robotPositionX + velocity / angularVelocity * 
-            (Math.sin(m_robotDirection  + angularVelocity * duration) -
+            (Math.sin(m_robotDirection  + Math.min(angle, angularVelocity) * duration) -
                 Math.sin(m_robotDirection));
         if (!Double.isFinite(newX))
         {
             newX = m_robotPositionX + velocity * duration * Math.cos(m_robotDirection);
         }
         double newY = m_robotPositionY - velocity / angularVelocity * 
-            (Math.cos(m_robotDirection  + angularVelocity * duration) -
+            (Math.cos(m_robotDirection  + Math.min(angle, angularVelocity) * duration) -
                 Math.cos(m_robotDirection));
         if (!Double.isFinite(newY))
         {
@@ -141,21 +138,13 @@ public class GameVisualizer extends JPanel
         }
         m_robotPositionX = newX;
         m_robotPositionY = newY;
-        double newDirection = asNormalizedRadians(m_robotDirection + angularVelocity * duration); 
+        double newDirection = asNormalizedRadians(m_robotDirection + Math.min(angle, angularVelocity) * duration);
         m_robotDirection = newDirection;
     }
 
     private static double asNormalizedRadians(double angle)
     {
-        while (angle < 0)
-        {
-            angle += 2*Math.PI;
-        }
-        while (angle >= 2*Math.PI)
-        {
-            angle -= 2*Math.PI;
-        }
-        return angle;
+        return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
     }
     
     private static int round(double value)
@@ -182,11 +171,9 @@ public class GameVisualizer extends JPanel
         g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
     
-    private void drawRobot(Graphics2D g, int x, int y, double direction)
+    private void drawRobot(Graphics2D g, int robotCenterX, int robotCenterY, double direction)
     {
-        int robotCenterX = round(m_robotPositionX); 
-        int robotCenterY = round(m_robotPositionY);
-        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY); 
+        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
         fillOval(g, robotCenterX, robotCenterY, 30, 10);

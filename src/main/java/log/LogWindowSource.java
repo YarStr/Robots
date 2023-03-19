@@ -6,11 +6,11 @@ import java.util.Collections;
 /**
  * Что починить:
  * 1. Этот класс порождает утечку ресурсов (связанные слушатели оказываются
- * удерживаемыми в памяти)
+ * удерживаемыми в памяти) //В ПРОЦЕССЕ
  * 2. Этот класс хранит активные сообщения лога, но в такой реализации он 
  * их лишь накапливает. Надо же, чтобы количество сообщений в логе было ограничено 
  * величиной m_iQueueLength (т.е. реально нужна очередь сообщений 
- * ограниченного размера) 
+ * ограниченного размера) //РЕШЕНО, ЗНАЧЕНИЕ ИЗМЕНЯЕТСЯ В ФАЙЛЕ LOGGER
  */
 public class LogWindowSource
 {
@@ -23,7 +23,7 @@ public class LogWindowSource
     public LogWindowSource(int iQueueLength) 
     {
         m_iQueueLength = iQueueLength;
-        m_messages = new ArrayList<LogEntry>(iQueueLength);
+        m_messages = new ArrayList<LogEntry>();
         m_listeners = new ArrayList<LogChangeListener>();
     }
     
@@ -41,7 +41,7 @@ public class LogWindowSource
         synchronized(m_listeners)
         {
             m_listeners.remove(listener);
-            m_activeListeners = null;
+            m_activeListeners = m_listeners.toArray(new LogChangeListener[m_listeners.size()]);
         }
     }
     
@@ -49,6 +49,9 @@ public class LogWindowSource
     {
         LogEntry entry = new LogEntry(logLevel, strMessage);
         m_messages.add(entry);
+        if (m_messages.size() > m_iQueueLength){
+            m_messages.remove(0);
+        }
         LogChangeListener [] activeListeners = m_activeListeners;
         if (activeListeners == null)
         {
@@ -65,11 +68,6 @@ public class LogWindowSource
         {
             listener.onLogChanged();
         }
-    }
-    
-    public int size()
-    {
-        return m_messages.size();
     }
 
     public Iterable<LogEntry> range(int startFrom, int count)
