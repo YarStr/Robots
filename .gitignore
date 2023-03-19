@@ -1,0 +1,10 @@
+. idea/
+# Intellij
+.idea/
+*.iml
+*.iws
+*.xml
+
+# Maven
+robot.log/
+target/
