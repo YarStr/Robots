@@ -21,33 +21,50 @@ public class Robot {
         this.direction = direction;
     }
 
-    private static double applyLimits(double value, double min, double max) {
-        return Math.min(Math.max(value, min), max);
+    public void turnToTarget(Target target) {
+        double angleToTarget = getAngleToTarget(x, y, target.x, target.y);
+        double newAngle = asNormalizedRadians(angleToTarget - direction);
+        double angleDifference = asNormalizedRadians(newAngle - angle);
+
+        updateAngularVelocity(angleToTarget, angleDifference);
+        angle = newAngle;
     }
 
-    public void turnToTarget(Target target) {
-        double angleToTarget = angleTo(x, y, target.x, target.y);
+    private static double getAngleToTarget(double fromX, double fromY, double toX, double toY) {
+        double diffX = toX - fromX;
+        double diffY = toY - fromY;
+        return asNormalizedRadians(Math.atan2(diffY, diffX));
+    }
 
-        double newAngle = asNormalizedRadians(angleToTarget - direction);
-        double angleDiff = asNormalizedRadians(newAngle - angle);
-        int angleToTargetDegrees = (int) Math.round(Math.toDegrees(angleToTarget));
+    private static double asNormalizedRadians(double angle) {
+        return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    }
 
-        if (Math.abs(angleDiff) < 0.1 || angleToTargetDegrees % 45 == 0) {
+    private void updateAngularVelocity(double angleToTarget, double angleDifference) {
+        int angleToTargetInDegrees = (int) Math.round(Math.toDegrees(angleToTarget));
+        if (Math.abs(angleDifference) < 0.1 || angleToTargetInDegrees % 45 == 0)
             angularVelocity = 0;
-        } else {
+        else {
             angularVelocity = maxAngularVelocity;
             if (angleToTarget < direction)
                 angularVelocity *= -1;
         }
-        angle = newAngle;
     }
 
     public void move() {
-        velocity = applyLimits(velocity, 0, maxVelocity);
-        angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
+        applyVelocityLimits();
         x = getNewX();
         y = getNewY();
         direction = getNewDirection();
+    }
+
+    private void applyVelocityLimits() {
+        velocity = applyLimits(velocity, 0, maxVelocity);
+        angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
+    }
+
+    private static double applyLimits(double value, double min, double max) {
+        return Math.min(Math.max(value, min), max);
     }
 
     private double getNewX() {
@@ -66,26 +83,16 @@ public class Robot {
         return asNormalizedRadians(direction + Math.min(angle, angularVelocity) * duration);
     }
 
-    private static double asNormalizedRadians(double angle) {
-        return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-    }
-
-    private static double angleTo(double fromX, double fromY, double toX, double toY) {
-        double diffX = toX - fromX;
-        double diffY = toY - fromY;
-        return asNormalizedRadians(Math.atan2(diffY, diffX));
-    }
-
-    private static int round(double value) {
-        return (int) (value + 0.5);
-    }
-
     public int getRoundedX() {
         return round(x);
     }
 
     public int getRoundedY() {
         return round(y);
+    }
+
+    private static int round(double value) {
+        return (int) (value + 0.5);
     }
 
     public double getDistanceToTarget(Target target) {

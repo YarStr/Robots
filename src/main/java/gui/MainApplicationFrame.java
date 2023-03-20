@@ -1,16 +1,10 @@
 package gui;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.net.URL;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 
 import gui.menuItems.LookAndFeelMenuItems;
 import gui.menuItems.TestMenuItems;
@@ -24,7 +18,16 @@ public class MainApplicationFrame extends JFrame {
         addWindow(createLogWindow());
         addWindow(createGameWindow());
         setJMenuBar(generateMenuBar());
+        setTitle("Приложение Робот");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    public void setFrameSizeAndPaddings() {
+        int inset = 50;
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds(inset, inset,
+                screenSize.width - inset * 2,
+                screenSize.height - inset * 2);
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -92,7 +95,6 @@ public class MainApplicationFrame extends JFrame {
         return addLogMessageItem;
     }
 
-    // Придумать, как обрабатывать ошибки умнее
     private void setLookAndFeel(String className) {
         try {
             UIManager.setLookAndFeel(className);

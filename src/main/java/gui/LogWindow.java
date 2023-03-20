@@ -13,7 +13,7 @@ import log.LogEntry;
 import log.LogWindowSource;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener {
-    private LogWindowSource m_logSource;
+    private final LogWindowSource m_logSource;
 
     private final TextArea m_logContent;
 
@@ -41,9 +41,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
     }
 
     @Override
-    public void doDefaultCloseAction(){
+    public void doDefaultCloseAction() {
         ArrayList<LogChangeListener> listeners = m_logSource.getListener();
-        for (LogChangeListener listener: listeners) {
+        for (LogChangeListener listener : listeners) {
             m_logSource.unregisterListener(listener);
         }
         super.doDefaultCloseAction();
