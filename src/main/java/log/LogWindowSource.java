@@ -35,7 +35,7 @@ public class LogWindowSource {
     public void unregisterListener(LogChangeListener listener) {
         synchronized (m_listeners) {
             m_listeners.remove(listener);
-            m_activeListeners = m_listeners.toArray(new LogChangeListener[m_listeners.size()]);
+            m_activeListeners = m_listeners.toArray(new LogChangeListener[0]);
         }
     }
 
@@ -65,6 +65,10 @@ public class LogWindowSource {
         }
         int indexTo = Math.min(startFrom + count, m_messages.size());
         return m_messages.subList(startFrom, indexTo);
+    }
+
+    public ArrayList<LogChangeListener> getListener(){
+        return m_listeners;
     }
 
     public Iterable<LogEntry> all() {

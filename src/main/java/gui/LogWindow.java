@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.TextArea;
+import java.util.ArrayList;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -12,7 +13,8 @@ import log.LogEntry;
 import log.LogWindowSource;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener {
-    private final LogWindowSource m_logSource;
+    private LogWindowSource m_logSource;
+
     private final TextArea m_logContent;
 
     public LogWindow(LogWindowSource logSource) {
@@ -36,6 +38,15 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
         }
         m_logContent.setText(content.toString());
         m_logContent.invalidate();
+    }
+
+    @Override
+    public void doDefaultCloseAction(){
+        ArrayList<LogChangeListener> listeners = m_logSource.getListener();
+        for (LogChangeListener listener: listeners) {
+            m_logSource.unregisterListener(listener);
+        }
+        super.doDefaultCloseAction();
     }
 
     @Override
