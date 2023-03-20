@@ -2,7 +2,7 @@ package gui.menuItems;
 
 import javax.swing.UIManager;
 
-public enum LookAndFeels {
+public enum LookAndFeelMenuItems {
     NIMBUS {
         public String getStringName() {
             return "Схема Nimbus";

@@ -1,8 +1,6 @@
 package gui.menuItems;
 
-import javax.swing.*;
-
-public enum Test {
+public enum TestMenuItems {
     NEW_MESSAGE {
         public String getStringName() {
             return "Сообщение в лог";

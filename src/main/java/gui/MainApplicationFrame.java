@@ -12,25 +12,17 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import gui.menuItems.LookAndFeels;
-import gui.menuItems.Test;
+import gui.menuItems.LookAndFeelMenuItems;
+import gui.menuItems.TestMenuItems;
 import log.Logger;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
-    // Разобраться, почему здесь не работает setBounds, setMinimumSize и прочее
     public MainApplicationFrame() {
-//        int inset = 50;
-//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//        setBounds(inset, inset,
-//                screenSize.width - inset * 2,
-//                screenSize.height - inset * 2);
         setContentPane(desktopPane);
-
         addWindow(createLogWindow());
         addWindow(createGameWindow());
-
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -69,8 +61,8 @@ public class MainApplicationFrame extends JFrame {
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
 
-        for (LookAndFeels name : LookAndFeels.values())
-            lookAndFeelMenu.add(getSystemLookAndFeelMenuItem(name));
+        for (LookAndFeelMenuItems item : LookAndFeelMenuItems.values())
+            lookAndFeelMenu.add(getSystemLookAndFeelMenuItem(item));
 
         return lookAndFeelMenu;
     }
@@ -79,11 +71,11 @@ public class MainApplicationFrame extends JFrame {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
-        testMenu.add(getTestMenuItem(Test.NEW_MESSAGE));
+        testMenu.add(getTestMenuItem(TestMenuItems.NEW_MESSAGE));
         return testMenu;
     }
 
-    private JMenuItem getSystemLookAndFeelMenuItem(LookAndFeels menuName) {
+    private JMenuItem getSystemLookAndFeelMenuItem(LookAndFeelMenuItems menuName) {
         JMenuItem systemLookAndFeel = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(menuName.getClassName());
@@ -92,11 +84,11 @@ public class MainApplicationFrame extends JFrame {
         return systemLookAndFeel;
     }
 
-    private JMenuItem getTestMenuItem(Test menuName) {
+    private JMenuItem getTestMenuItem(TestMenuItems menuName) {
         JMenuItem addLogMessageItem = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) -> {
-            Logger.debug(menuName.getCommand());
-        });
+        addLogMessageItem.addActionListener((event) ->
+            Logger.debug(menuName.getCommand())
+        );
         return addLogMessageItem;
     }
 

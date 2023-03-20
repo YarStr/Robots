@@ -3,15 +3,6 @@ package log;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * Что починить:
- * 1. Этот класс порождает утечку ресурсов (связанные слушатели оказываются
- * удерживаемыми в памяти) //В ПРОЦЕССЕ
- * 2. Этот класс хранит активные сообщения лога, но в такой реализации он
- * их лишь накапливает. Надо же, чтобы количество сообщений в логе было ограничено
- * величиной m_iQueueLength (т.е. реально нужна очередь сообщений
- * ограниченного размера) //РЕШЕНО, ЗНАЧЕНИЕ ИЗМЕНЯЕТСЯ В ФАЙЛЕ LOGGER
- */
 public class LogWindowSource {
     private final int m_iQueueLength;
 
@@ -21,8 +12,8 @@ public class LogWindowSource {
 
     public LogWindowSource(int iQueueLength) {
         m_iQueueLength = iQueueLength;
-        m_messages = new ArrayList<LogEntry>();
-        m_listeners = new ArrayList<LogChangeListener>();
+        m_messages = new ArrayList<>();
+        m_listeners = new ArrayList<>();
     }
 
     public void registerListener(LogChangeListener listener) {
@@ -54,6 +45,7 @@ public class LogWindowSource {
                 }
             }
         }
+        assert activeListeners != null;
         for (LogChangeListener listener : activeListeners) {
             listener.onLogChanged();
         }
