@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.TextArea;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -42,7 +43,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
 
     @Override
     public void doDefaultCloseAction() {
-        ArrayList<LogChangeListener> listeners = m_logSource.getListener();
+        ConcurrentLinkedQueue<LogChangeListener> listeners = m_logSource.getListener();
         for (LogChangeListener listener : listeners) {
             m_logSource.unregisterListener(listener);
         }
