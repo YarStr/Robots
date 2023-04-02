@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.net.URL;
 
 import javax.swing.*;
 
@@ -18,16 +17,18 @@ public class MainApplicationFrame extends JFrame {
         addWindow(createLogWindow());
         addWindow(createGameWindow());
         setJMenuBar(generateMenuBar());
+
         setTitle("Приложение Робот");
+        String mainSystemLookAndFeel = LookAndFeelMenuItems.NIMBUS.getClassName();
+        setLookAndFeel(mainSystemLookAndFeel);
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     public void setFrameSizeAndPaddings() {
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-                screenSize.width - inset * 2,
-                screenSize.height - inset * 2);
+        setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -54,28 +55,49 @@ public class MainApplicationFrame extends JFrame {
 
     private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        menuBar.add(getOptionsMenu());
         menuBar.add(getSystemLookAndFeelMenu());
         menuBar.add(getTestMenu());
         return menuBar;
     }
 
-    private JMenu getSystemLookAndFeelMenu() {
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
+    private JMenu getOptionsMenu() {
+        JMenu fileMenu = getMenuWithNameAndDescription("Опции", "Настройка опций приложения");
+        fileMenu.add(getExitButton());
+        return fileMenu;
+    }
 
+    private JMenu getSystemLookAndFeelMenu() {
+        JMenu lookAndFeelMenu = getMenuWithNameAndDescription(
+                "Режим отображения",
+                "Управление режимом отображения приложения"
+        );
         for (LookAndFeelMenuItems item : LookAndFeelMenuItems.values())
             lookAndFeelMenu.add(getSystemLookAndFeelMenuItem(item));
-
         return lookAndFeelMenu;
     }
 
     private JMenu getTestMenu() {
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
+        JMenu testMenu = getMenuWithNameAndDescription("Тесты", "Тестовые команды");
         testMenu.add(getTestMenuItem(TestMenuItems.NEW_MESSAGE));
         return testMenu;
+    }
+
+    private JMenu getMenuWithNameAndDescription(String name, String description) {
+        JMenu menu = new JMenu(name);
+        menu.setMnemonic(KeyEvent.VK_T);
+        menu.getAccessibleContext().setAccessibleDescription(description);
+        return menu;
+    }
+
+    private JMenuItem getExitButton() {
+        JMenuItem exitButton = new JMenuItem("Выход", KeyEvent.VK_S);
+        exitButton.addActionListener((event) -> {
+            this.setVisible(false);
+            this.dispose();
+            System.exit(0);
+        });
+        return exitButton;
     }
 
     private JMenuItem getSystemLookAndFeelMenuItem(LookAndFeelMenuItems menuName) {
@@ -89,9 +111,7 @@ public class MainApplicationFrame extends JFrame {
 
     private JMenuItem getTestMenuItem(TestMenuItems menuName) {
         JMenuItem addLogMessageItem = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) ->
-            Logger.debug(menuName.getCommand())
-        );
+        addLogMessageItem.addActionListener((event) -> Logger.debug(menuName.getCommand()));
         return addLogMessageItem;
     }
 
@@ -99,8 +119,8 @@ public class MainApplicationFrame extends JFrame {
         try {
             UIManager.setLookAndFeel(className);
             SwingUtilities.updateComponentTreeUI(this);
-        } catch (ClassNotFoundException | InstantiationException
-                 | IllegalAccessException | UnsupportedLookAndFeelException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException e) {
             Logger.debug(e.getMessage());
         }
     }
