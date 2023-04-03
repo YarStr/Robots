@@ -1,11 +1,13 @@
 package gui.menuItems;
 
 import javax.swing.UIManager;
+import java.util.ResourceBundle;
 
 public enum LookAndFeelMenuItems {
+
     NIMBUS {
-        public String getStringName() {
-            return "Схема Nimbus";
+        public String getStringName(ResourceBundle bundle) {
+            return bundle.getString("schematic.nimbus");
         }
 
         public String getClassName() {
@@ -13,8 +15,8 @@ public enum LookAndFeelMenuItems {
         }
     },
     METAL {
-        public String getStringName() {
-            return "Схема Metal";
+        public String getStringName(ResourceBundle bundle) {
+            return bundle.getString("schematic.metal");
         }
 
         public String getClassName() {
@@ -22,8 +24,8 @@ public enum LookAndFeelMenuItems {
         }
     },
     SYSTEM {
-        public String getStringName() {
-            return "Системная схема";
+        public String getStringName(ResourceBundle bundle) {
+            return bundle.getString("schematic.system");
         }
 
         public String getClassName() {
@@ -31,8 +33,8 @@ public enum LookAndFeelMenuItems {
         }
     },
     CROSS {
-        public String getStringName() {
-            return "Универсальная схема";
+        public String getStringName(ResourceBundle bundle) {
+            return bundle.getString("schematic.cross");
         }
 
         public String getClassName() {
@@ -40,7 +42,8 @@ public enum LookAndFeelMenuItems {
         }
     };
 
-    public abstract String getStringName();
+
+    public abstract String getStringName(ResourceBundle bundle);
 
     public abstract String getClassName();
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+import java.util.ResourceBundle;
 
 public class SafeClosableWindow extends JInternalFrame {
 
@@ -8,14 +9,14 @@ public class SafeClosableWindow extends JInternalFrame {
         super(title, resizable, closable, maximizable, iconifiable);
     }
 
-    @Override
-    public void doDefaultCloseAction() {
-        Object[] options = {"Да", "Нет"};
-        String message = "Закрыть \"" + title + "\"?";
+//    @Override
+    public void doDefaultCloseAction(ResourceBundle bundle) {
+        Object[] options = {bundle.getString("options.name1"), bundle.getString("options.name2")};
+        String message = bundle.getString("close.message") + "\"" + title + "\"?";
         if (JOptionPane.showOptionDialog(
                 this,
                 message,
-                "Подтверждение",
+                bundle.getString("close.title"),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,

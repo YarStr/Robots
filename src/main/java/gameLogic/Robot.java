@@ -41,46 +41,37 @@ public class Robot {
     }
 
     private void updateAngularVelocity(double angleToTarget, double angleDifference) {
-        int angleToTargetInDegrees = (int) Math.round(Math.toDegrees(angleToTarget));
-        if (Math.abs(angleDifference) < 0.1 || angleToTargetInDegrees % 45 == 0)
-            angularVelocity = 0;
-        else {
-            angularVelocity = maxAngularVelocity;
-            if (angleToTarget < direction)
-                angularVelocity *= -1;
+//        int angleToTargetInDegrees = (int) Math.round(Math.toDegrees(angleToTarget));
+        if (Math.abs(direction - angleToTarget) < 10e-7) {
+            angularVelocity = direction;
+        } else if (direction >= Math.PI) {
+            if (direction - Math.PI < angleToTarget && angleToTarget < direction)
+                angularVelocity = -maxAngularVelocity;
+            else
+                angularVelocity = maxAngularVelocity;
+        } else {
+            if (direction < angleToTarget && angleToTarget < direction + Math.PI)
+                angularVelocity = maxAngularVelocity;
+            else
+                angularVelocity = -maxAngularVelocity;
         }
     }
 
-    public void move() {
-        applyVelocityLimits();
-        x = getNewX();
-        y = getNewY();
-        direction = getNewDirection();
-    }
-
-    private void applyVelocityLimits() {
+    public void move(int height, int width) {
         velocity = applyLimits(velocity, 0, maxVelocity);
-        angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
+        double newDirection = asNormalizedRadians(direction + angularVelocity * duration);
+        double newX = x + velocity * duration * Math.cos(newDirection);
+        if (width != 0)
+            newX = applyLimits(newX, 0, width);
+        double newY = y + velocity * duration * Math.sin(newDirection);
+        if (height != 0)
+            newY = applyLimits(newY, 0, height);
+        x=newX;
+        y=newY;
+        direction = newDirection;
     }
-
     private static double applyLimits(double value, double min, double max) {
         return Math.min(Math.max(value, min), max);
-    }
-
-    private double getNewX() {
-        double value = x + velocity / angularVelocity * (Math.sin(direction + Math.min(angle, angularVelocity)
-                * duration) - Math.sin(direction));
-        return Double.isFinite(value) ? value : x + velocity * duration * Math.cos(direction);
-    }
-
-    private double getNewY() {
-        double value = y - velocity / angularVelocity * (Math.cos(direction + Math.min(angle, angularVelocity)
-                * duration) - Math.cos(direction));
-        return Double.isFinite(value) ? value : y + velocity * duration * Math.sin(direction);
-    }
-
-    private double getNewDirection() {
-        return asNormalizedRadians(direction + Math.min(angle, angularVelocity) * duration);
     }
 
     public int getRoundedX() {
@@ -100,4 +91,37 @@ public class Robot {
         double diffY = y - target.y;
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
+
+
+
+
+    //    public void move() {
+//        applyVelocityLimits();
+////        x = getNewX();
+////        y = getNewY();
+//        direction = getNewDirection();
+//    }
+
+//    private void applyVelocityLimits() {
+//        velocity = applyLimits(velocity, 0, maxVelocity);
+//        angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
+//    }
+//
+
+//
+//    private double getNewX() {
+//        double value = x + velocity / angularVelocity * (Math.sin(direction + Math.min(angle, angularVelocity)
+//                * duration) - Math.sin(direction));
+//        return Double.isFinite(value) ? value : x + velocity * duration * Math.cos(direction);
+//    }
+//
+//    private double getNewY() {
+//        double value = y - velocity / angularVelocity * (Math.cos(direction + Math.min(angle, angularVelocity)
+//                * duration) - Math.cos(direction));
+//        return Double.isFinite(value) ? value : y + velocity * duration * Math.sin(direction);
+//    }
+//
+//    private double getNewDirection() {
+//        return asNormalizedRadians(direction + Math.min(angle, angularVelocity) * duration);
+//    }
 }

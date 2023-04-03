@@ -2,23 +2,34 @@ package gui;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.*;
 
+import gui.menuItems.LocalizationMenuItems;
 import gui.menuItems.LookAndFeelMenuItems;
 import gui.menuItems.TestMenuItems;
 import log.Logger;
 
+import java.io.File;
+
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    ResourceBundle bundle = ResourceBundle.getBundle("message", Locale.ENGLISH);
+    JMenuBar menuBar = new JMenuBar();
+    GameWindow gameWindow = new GameWindow(bundle, 400, 400);
+
+    LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle);
 
     public MainApplicationFrame() {
         setContentPane(desktopPane);
         addWindow(createLogWindow());
         addWindow(createGameWindow());
+
         setJMenuBar(generateMenuBar());
 
-        setTitle("Приложение Робот");
+        setTitle(bundle.getString("main.title"));
         String mainSystemLookAndFeel = LookAndFeelMenuItems.NIMBUS.getClassName();
         setLookAndFeel(mainSystemLookAndFeel);
 
@@ -37,50 +48,60 @@ public class MainApplicationFrame extends JFrame {
     }
 
     protected LogWindow createLogWindow() {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(10, 10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug(bundle.getString("logger.message"));
         return logWindow;
     }
 
     protected GameWindow createGameWindow() {
-        GameWindow gameWindow = new GameWindow();
         gameWindow.setLocation(310, 10);
         gameWindow.setSize(400, 400);
         return gameWindow;
     }
 
     private JMenuBar generateMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
         menuBar.add(getOptionsMenu());
         menuBar.add(getSystemLookAndFeelMenu());
+        menuBar.add(getLocalization());
         menuBar.add(getTestMenu());
         return menuBar;
     }
 
     private JMenu getOptionsMenu() {
-        JMenu fileMenu = getMenuWithNameAndDescription("Опции", "Настройка опций приложения");
+        JMenu fileMenu = getMenuWithNameAndDescription(
+                bundle.getString("jMenu.name"),
+                bundle.getString("fileMenu.description"));
         fileMenu.add(getExitButton());
         return fileMenu;
     }
 
     private JMenu getSystemLookAndFeelMenu() {
         JMenu lookAndFeelMenu = getMenuWithNameAndDescription(
-                "Режим отображения",
-                "Управление режимом отображения приложения"
-        );
+                bundle.getString("lookAndFeelMenu.name"),
+                bundle.getString("lookAndFeelMenu.description"));
         for (LookAndFeelMenuItems item : LookAndFeelMenuItems.values())
             lookAndFeelMenu.add(getSystemLookAndFeelMenuItem(item));
         return lookAndFeelMenu;
     }
 
     private JMenu getTestMenu() {
-        JMenu testMenu = getMenuWithNameAndDescription("Тесты", "Тестовые команды");
+        JMenu testMenu = getMenuWithNameAndDescription(
+                bundle.getString("testMenu.name"),
+                bundle.getString("testMenu.description"));
         testMenu.add(getTestMenuItem(TestMenuItems.NEW_MESSAGE));
         return testMenu;
+    }
+
+    private JMenu getLocalization() {
+        JMenu localization = getMenuWithNameAndDescription(
+                bundle.getString("local.name"),
+                bundle.getString("local.description"));
+        for (LocalizationMenuItems item : LocalizationMenuItems.values())
+            localization.add(getLocalizationMenuItem(item));
+        return localization;
     }
 
     private JMenu getMenuWithNameAndDescription(String name, String description) {
@@ -91,7 +112,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
     private JMenuItem getExitButton() {
-        JMenuItem exitButton = new JMenuItem("Выход", KeyEvent.VK_S);
+        JMenuItem exitButton = new JMenuItem(bundle.getString("exitButton.name"), KeyEvent.VK_S);
         exitButton.addActionListener((event) -> {
             this.setVisible(false);
             this.dispose();
@@ -101,7 +122,7 @@ public class MainApplicationFrame extends JFrame {
     }
 
     private JMenuItem getSystemLookAndFeelMenuItem(LookAndFeelMenuItems menuName) {
-        JMenuItem systemLookAndFeel = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
+        JMenuItem systemLookAndFeel = new JMenuItem(menuName.getStringName(bundle), KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(menuName.getClassName());
             this.invalidate();
@@ -115,6 +136,16 @@ public class MainApplicationFrame extends JFrame {
         return addLogMessageItem;
     }
 
+    private JMenuItem getLocalizationMenuItem(LocalizationMenuItems menuName) {
+        JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
+        localization.addActionListener((event) -> {
+            setLocalization("message");
+            getLocales();
+            this.invalidate();
+        });
+        return localization;
+    }
+
     private void setLookAndFeel(String className) {
         try {
             UIManager.setLookAndFeel(className);
@@ -123,5 +154,36 @@ public class MainApplicationFrame extends JFrame {
                  UnsupportedLookAndFeelException e) {
             Logger.debug(e.getMessage());
         }
+    }
+
+    private void setLocalization(String newLocale) {
+        bundle = ResourceBundle.getBundle(newLocale);
+    }
+
+    private void getLocales() {
+        File directory = new File("src\\main\\resources");
+        String[] files = directory.list((dir, name) -> name.endsWith(".properties"));
+
+        assert files != null;
+        for (String fileName : files) {
+            String localeName = fileName.replace(".properties", "");
+            JMenuItem locale = new JMenuItem(bundle.getString(localeName), KeyEvent.VK_S);
+            locale.addActionListener(e -> SwingUtilities.invokeLater(() -> {
+                menuBar.removeAll();
+                setLocalization(localeName);
+                resetUI();
+            }));
+            this.add(locale);
+        }
+    }
+
+    private void resetUI() {
+        setJMenuBar(generateMenuBar());
+        gameWindow.setTitle(bundle.getString("gameWindow.title"));
+        logWindow.setTitle(bundle.getString("logWindow.title"));
+//        gameWindow.changeLocale(bundle);
+//        logWindow.changeLocale(bundle);
+        revalidate();
+        repaint();
     }
 }

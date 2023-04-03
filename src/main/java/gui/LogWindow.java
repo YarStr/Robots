@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.TextArea;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
@@ -16,8 +17,11 @@ public class LogWindow extends SafeClosableWindow implements LogChangeListener {
 
     private final TextArea m_logContent;
 
-    public LogWindow(LogWindowSource logSource) {
-        super("Протокол работы", true, true, true, true);
+    ResourceBundle bundle;
+
+    public LogWindow(LogWindowSource logSource, ResourceBundle bundle) {
+        super(bundle.getString("logWindow.title"), true, true, true, true);
+        this.bundle = bundle;
         m_logSource = logSource;
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
@@ -45,7 +49,7 @@ public class LogWindow extends SafeClosableWindow implements LogChangeListener {
         for (LogChangeListener listener : listeners) {
             m_logSource.unregisterListener(listener);
         }
-        super.doDefaultCloseAction();
+        super.doDefaultCloseAction(bundle);
     }
 
     @Override

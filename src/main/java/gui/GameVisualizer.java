@@ -24,7 +24,12 @@ public class GameVisualizer extends JPanel {
     private final Robot robot = new Robot(100, 100, 0);
     private final Target target = new Target(150, 100);
 
-    public GameVisualizer() {
+    Integer wightScreen;
+    Integer heightScreen;
+
+    public GameVisualizer(int wight, int height) {
+        wightScreen = wight;
+        heightScreen = height;
         Timer m_timer = initTimer();
         m_timer.schedule(new TimerTask() {
             @Override
@@ -61,7 +66,7 @@ public class GameVisualizer extends JPanel {
         if (robot.getDistanceToTarget(target) < 0.5)
             return;
         robot.turnToTarget(target);
-        robot.move();
+        robot.move(heightScreen, wightScreen);
     }
 
     @Override
