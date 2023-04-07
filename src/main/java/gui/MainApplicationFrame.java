@@ -12,11 +12,10 @@ import gui.menuItems.LookAndFeelMenuItems;
 import gui.menuItems.TestMenuItems;
 import log.Logger;
 
-import java.io.File;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    ResourceBundle bundle = ResourceBundle.getBundle("message", Locale.ENGLISH);
+    ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     JMenuBar menuBar = new JMenuBar();
     GameWindow gameWindow = new GameWindow(bundle, 400, 400);
 
@@ -91,7 +90,7 @@ public class MainApplicationFrame extends JFrame {
         JMenu testMenu = getMenuWithNameAndDescription(
                 bundle.getString("testMenu.name"),
                 bundle.getString("testMenu.description"));
-        testMenu.add(getTestMenuItem(TestMenuItems.NEW_MESSAGE));
+        testMenu.add(getTestMenuItem());
         return testMenu;
     }
 
@@ -130,17 +129,17 @@ public class MainApplicationFrame extends JFrame {
         return systemLookAndFeel;
     }
 
-    private JMenuItem getTestMenuItem(TestMenuItems menuName) {
-        JMenuItem addLogMessageItem = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) -> Logger.debug(menuName.getCommand()));
+    private JMenuItem getTestMenuItem() {
+        JMenuItem addLogMessageItem = new JMenuItem(TestMenuItems.NEW_MESSAGE.getStringName(bundle), KeyEvent.VK_S);
+        addLogMessageItem.addActionListener((event) -> Logger.debug(TestMenuItems.NEW_MESSAGE.getCommand(bundle)));
         return addLogMessageItem;
     }
 
     private JMenuItem getLocalizationMenuItem(LocalizationMenuItems menuName) {
         JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
         localization.addActionListener((event) -> {
-            setLocalization("message");
-            getLocales();
+            setLocalization(bundle.getBaseBundleName(), menuName.getResourceName());
+            resetUI();
             this.invalidate();
         });
         return localization;
@@ -156,33 +155,16 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
-    private void setLocalization(String newLocale) {
-        bundle = ResourceBundle.getBundle(newLocale);
-    }
-
-    private void getLocales() {
-        File directory = new File("src\\main\\resources");
-        String[] files = directory.list((dir, name) -> name.endsWith(".properties"));
-
-        assert files != null;
-        for (String fileName : files) {
-            String localeName = fileName.replace(".properties", "");
-            JMenuItem locale = new JMenuItem(bundle.getString(localeName), KeyEvent.VK_S);
-            locale.addActionListener(e -> SwingUtilities.invokeLater(() -> {
-                menuBar.removeAll();
-                setLocalization(localeName);
-                resetUI();
-            }));
-            this.add(locale);
-        }
+    private void setLocalization(String resourceName, String nameLocal) {
+        bundle = ResourceBundle.getBundle(resourceName, new Locale(nameLocal));
     }
 
     private void resetUI() {
+        menuBar.removeAll();
         setJMenuBar(generateMenuBar());
         gameWindow.setTitle(bundle.getString("gameWindow.title"));
         logWindow.setTitle(bundle.getString("logWindow.title"));
-//        gameWindow.changeLocale(bundle);
-//        logWindow.changeLocale(bundle);
+        setTitle(bundle.getString("main.title"));
         revalidate();
         repaint();
     }
