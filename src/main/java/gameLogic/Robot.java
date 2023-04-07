@@ -40,6 +40,8 @@ public class Robot {
         return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
     }
 
+
+
     private void updateAngularVelocity(double angleToTarget, double angleDifference) {
 //        int angleToTargetInDegrees = (int) Math.round(Math.toDegrees(angleToTarget));
         if (Math.abs(direction - angleToTarget) < 10e-7) {

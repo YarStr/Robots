@@ -49,7 +49,7 @@ public class LogWindow extends SafeClosableWindow implements LogChangeListener {
         for (LogChangeListener listener : listeners) {
             m_logSource.unregisterListener(listener);
         }
-        super.doDefaultCloseAction(bundle);
+        super.doDefaultCloseAction();
     }
 
     @Override

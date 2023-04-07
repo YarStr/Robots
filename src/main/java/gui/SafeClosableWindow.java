@@ -9,14 +9,14 @@ public class SafeClosableWindow extends JInternalFrame {
         super(title, resizable, closable, maximizable, iconifiable);
     }
 
-//    @Override
-    public void doDefaultCloseAction(ResourceBundle bundle) {
-        Object[] options = {bundle.getString("options.name1"), bundle.getString("options.name2")};
-        String message = bundle.getString("close.message") + "\"" + title + "\"?";
+    @Override
+    public void doDefaultCloseAction() {
+        Object[] options = {"Да", "Нет"};
+        String message = "Закрыть " + "\"" + title + "\"?";
         if (JOptionPane.showOptionDialog(
                 this,
                 message,
-                bundle.getString("close.title"),
+                "Подтверждение",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
