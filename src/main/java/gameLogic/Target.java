@@ -8,4 +8,9 @@ public class Target {
         this.x = x;
         this.y = y;
     }
+
+    public void correctPosition(int width, int height) {
+        if (x > width) x = width;
+        if (y > height) y = height;
+    }
 }

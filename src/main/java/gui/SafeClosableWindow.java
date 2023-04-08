@@ -1,7 +1,6 @@
 package gui;
 
 import javax.swing.*;
-import java.util.ResourceBundle;
 
 public class SafeClosableWindow extends JInternalFrame {
 
