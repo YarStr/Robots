@@ -22,7 +22,7 @@ public class GameVisualizer extends JPanel {
     }
     private final GameField gameField = new GameField(getWidth(), getHeight());
 
-    public GameVisualizer(int wight, int height) {
+    public GameVisualizer() {
         Timer m_timer = initTimer();
 
         m_timer.schedule(new TimerTask() {
@@ -50,7 +50,7 @@ public class GameVisualizer extends JPanel {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                gameField.target.correctPosition(GameVisualizer.this.getWidth(), GameVisualizer.this.getHeight());
+                gameField.applyLimits(getWidth(), getHeight());
             }
         });
 
@@ -64,8 +64,8 @@ public class GameVisualizer extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-        drawRobot(g2d, gameField.robot.getRoundedX(), gameField.robot.getRoundedY(), gameField.robot.direction);
-        drawTarget(g2d, gameField.target.x, gameField.target.y);
+        drawRobot(g2d, gameField.getRobotX(), gameField.getRobotY(), gameField.getRobotDirection());
+        drawTarget(g2d, gameField.getTargetX(), gameField.getTargetY());
     }
 
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {

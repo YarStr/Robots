@@ -17,7 +17,7 @@ public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
     ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     JMenuBar menuBar = new JMenuBar();
-    GameWindow gameWindow = new GameWindow(bundle, 400, 400);
+    GameWindow gameWindow = new GameWindow(bundle);
 
     LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle);
 
