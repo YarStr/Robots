@@ -1,44 +1,52 @@
 package gui;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
-import javax.swing.*;
-
+import gui.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.closeAdapters.ConfirmCloseWindowAdapter;
+import gui.internalWindows.GameWindow;
+import gui.internalWindows.LogWindow;
 import gui.menuItems.LocalizationMenuItems;
 import gui.menuItems.LookAndFeelMenuItems;
 import gui.menuItems.TestMenuItems;
 import log.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
     ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     JMenuBar menuBar = new JMenuBar();
-    GameWindow gameWindow = new GameWindow(bundle);
 
-    LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle);
+    ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(bundle);
+    ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(bundle);
+
+    GameWindow gameWindow = new GameWindow(bundle, confirmCloseFrameAdapter);
+    LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle, confirmCloseFrameAdapter);
 
     public MainApplicationFrame() {
         setContentPane(desktopPane);
-        addWindow(createLogWindow());
-        addWindow(createGameWindow());
-
+        addWorkingWindows();
         setJMenuBar(generateMenuBar());
-
         setTitle(bundle.getString("main.title"));
-        String mainSystemLookAndFeel = LookAndFeelMenuItems.NIMBUS.getClassName();
-        setLookAndFeel(mainSystemLookAndFeel);
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultTheme();
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(confirmCloseWindowAdapter);
     }
 
     public void setFrameSizeAndPaddings() {
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
+    }
+
+    private void addWorkingWindows() {
+        addWindow(createLogWindow());
+        addWindow(createGameWindow());
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -69,10 +77,16 @@ public class MainApplicationFrame extends JFrame {
         return menuBar;
     }
 
+    private void setDefaultTheme() {
+        String mainSystemLookAndFeel = LookAndFeelMenuItems.NIMBUS.getClassName();
+        setLookAndFeel(mainSystemLookAndFeel);
+    }
+
     private JMenu getOptionsMenu() {
         JMenu fileMenu = getMenuWithNameAndDescription(
                 bundle.getString("jMenu.name"),
-                bundle.getString("fileMenu.description"));
+                bundle.getString("fileMenu.description")
+        );
         fileMenu.add(getExitButton());
         return fileMenu;
     }
@@ -80,7 +94,8 @@ public class MainApplicationFrame extends JFrame {
     private JMenu getSystemLookAndFeelMenu() {
         JMenu lookAndFeelMenu = getMenuWithNameAndDescription(
                 bundle.getString("lookAndFeelMenu.name"),
-                bundle.getString("lookAndFeelMenu.description"));
+                bundle.getString("lookAndFeelMenu.description")
+        );
         for (LookAndFeelMenuItems item : LookAndFeelMenuItems.values())
             lookAndFeelMenu.add(getSystemLookAndFeelMenuItem(item));
         return lookAndFeelMenu;
@@ -89,7 +104,8 @@ public class MainApplicationFrame extends JFrame {
     private JMenu getTestMenu() {
         JMenu testMenu = getMenuWithNameAndDescription(
                 bundle.getString("testMenu.name"),
-                bundle.getString("testMenu.description"));
+                bundle.getString("testMenu.description")
+        );
         testMenu.add(getTestMenuItem());
         return testMenu;
     }
@@ -97,7 +113,8 @@ public class MainApplicationFrame extends JFrame {
     private JMenu getLocalization() {
         JMenu localization = getMenuWithNameAndDescription(
                 bundle.getString("local.name"),
-                bundle.getString("local.description"));
+                bundle.getString("local.description")
+        );
         for (LocalizationMenuItems item : LocalizationMenuItems.values())
             localization.add(getLocalizationMenuItem(item));
         return localization;
@@ -112,11 +129,9 @@ public class MainApplicationFrame extends JFrame {
 
     private JMenuItem getExitButton() {
         JMenuItem exitButton = new JMenuItem(bundle.getString("exitButton.name"), KeyEvent.VK_S);
-        exitButton.addActionListener((event) -> {
-            this.setVisible(false);
-            this.dispose();
-            System.exit(0);
-        });
+        exitButton.addActionListener((event) ->
+            dispatchEvent(new WindowEvent(MainApplicationFrame.this, WindowEvent.WINDOW_CLOSING))
+        );
         return exitButton;
     }
 
@@ -165,6 +180,8 @@ public class MainApplicationFrame extends JFrame {
         gameWindow.setTitle(bundle.getString("gameWindow.title"));
         logWindow.setTitle(bundle.getString("logWindow.title"));
         setTitle(bundle.getString("main.title"));
+        confirmCloseWindowAdapter.updateBundle(bundle);
+        confirmCloseFrameAdapter.updateBundle(bundle);
         revalidate();
         repaint();
     }

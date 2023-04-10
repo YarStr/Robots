@@ -1,25 +1,23 @@
-package gui;
+package gui.internalWindows;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.TextArea;
-import java.util.ResourceBundle;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import javax.swing.JPanel;
-
+import gui.closeAdapters.ConfirmCloseFrameAdapter;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
 
-public class LogWindow extends SafeClosableWindow implements LogChangeListener {
+import javax.swing.*;
+import java.awt.*;
+import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+public class LogWindow extends JInternalFrame implements LogChangeListener {
     private final LogWindowSource m_logSource;
 
     private final TextArea m_logContent;
 
     ResourceBundle bundle;
 
-    public LogWindow(LogWindowSource logSource, ResourceBundle bundle) {
+    public LogWindow(LogWindowSource logSource, ResourceBundle bundle, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
         super(bundle.getString("logWindow.title"), true, true, true, true);
         this.bundle = bundle;
         m_logSource = logSource;
@@ -30,6 +28,8 @@ public class LogWindow extends SafeClosableWindow implements LogChangeListener {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
         getContentPane().add(panel);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addInternalFrameListener(confirmCloseFrameAdapter);
         pack();
         updateLogContent();
     }

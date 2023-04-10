@@ -1,11 +1,9 @@
-package gui;
+package gui.internalWindows;
 
 import gameLogic.GameField;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -13,8 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.JPanel;
 
 public class GameVisualizer extends JPanel {
     private static Timer initTimer() {
@@ -56,6 +52,7 @@ public class GameVisualizer extends JPanel {
 
         setDoubleBuffered(true);
     }
+
     protected void onRedrawEvent() {
         EventQueue.invokeLater(this::repaint);
     }
