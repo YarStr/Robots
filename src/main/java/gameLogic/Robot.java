@@ -24,7 +24,6 @@ public class Robot {
     public void turnToTarget(Target target) {
         double angleToTarget = getAngleToTarget(x, y, target.x, target.y);
         double newAngle = asNormalizedRadians(angleToTarget - direction);
-
         updateAngularVelocity(angleToTarget);
         angle = newAngle;
     }
@@ -55,20 +54,32 @@ public class Robot {
         }
     }
 
-    public void move() {
-        velocity = applyLimits(velocity, 0, maxVelocity);
-        direction = getNewDirection();
+    public void move(int width, int height) {
+        updateVelocity();
+        updateDirection();
+        updateCoordinates();
+        correctPosition(width, height);
+    }
 
+    private void updateVelocity() {
+        velocity = applyLimits(velocity, maxVelocity);
+    }
+
+    private void updateDirection() {
+        double newDirection = asNormalizedRadians(direction + Math.min(angle, angularVelocity) * duration);
+        direction = newDirection;
+    }
+
+    private void updateCoordinates() {
         double newX = x + velocity * duration * Math.cos(direction);
-
         double newY = y + velocity * duration * Math.sin(direction);
         x = newX;
         y = newY;
     }
 
-
-    private static double applyLimits(double value, double min, double max) {
-        return Math.min(Math.max(value, min), max);
+    private static double applyLimits(double value, double max) {
+        double zero_value = 0;
+        return Math.min(Math.max(value, zero_value), max);
     }
 
     public int getRoundedX() {
@@ -89,20 +100,14 @@ public class Robot {
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
-    private double getNewDirection() {
-        return asNormalizedRadians(direction + Math.min(angle, angularVelocity) * duration);
-    }
-
     public void correctPosition(int width, int height) {
-        double newX = 0;
-        double newY = 0;
-        if (width != 0)
-            newX = applyLimits(x, 0, width);
-
-        if (height != 0)
-            newY = applyLimits(y, 0, height);
-
-        x = newX;
-        y = newY;
+        if (width != 0) {
+            double newX = applyLimits(x, width);
+            x = newX;
+        }
+        if (height != 0) {
+            double newY = applyLimits(y, height);
+            y = newY;
+        }
     }
 }

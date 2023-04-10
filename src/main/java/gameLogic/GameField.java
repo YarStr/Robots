@@ -27,7 +27,7 @@ public class GameField {
 
     public void applyLimits(int updatedWidth, int updatedHeight) {
         updateFieldSize(updatedWidth, updatedHeight);
-        target.correctPosition(width, height);
+//        target.correctPosition(width, height);
         robot.correctPosition(width, height);
     }
 
@@ -35,7 +35,7 @@ public class GameField {
         if (robot.getDistanceToTarget(target) < 0.5)
             return;
         robot.turnToTarget(target);
-        robot.move();
+        robot.move(width, height);
     }
 
     public int getRobotX() {
