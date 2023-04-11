@@ -1,6 +1,5 @@
 package log;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LogWindowSource {
@@ -33,8 +32,10 @@ public class LogWindowSource {
     public void append(LogLevel logLevel, String strMessage) {
         LogEntry entry = new LogEntry(logLevel, strMessage);
         m_messages.offer(entry);
-        if (m_messages.size() > m_iQueueLength) {
-            m_messages.poll();
+        synchronized (m_messages) {
+            if (m_messages.size() > m_iQueueLength) {
+                m_messages.poll();
+            }
         }
         LogChangeListener[] activeListeners = m_activeListeners;
         if (activeListeners == null) {
