@@ -19,14 +19,14 @@ import java.util.ResourceBundle;
 
 public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
-    JMenuBar menuBar = new JMenuBar();
+    private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
+    private final JMenuBar menuBar = new JMenuBar();
 
-    ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(bundle);
-    ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(bundle);
+    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(bundle);
+    private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(bundle);
 
-    GameWindow gameWindow = new GameWindow(bundle, confirmCloseFrameAdapter);
-    LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle, confirmCloseFrameAdapter);
+    private final GameWindow gameWindow = new GameWindow(bundle, confirmCloseFrameAdapter);
+    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle, confirmCloseFrameAdapter);
 
     public MainApplicationFrame() {
         setContentPane(desktopPane);

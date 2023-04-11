@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements ConfirmClosable {
 
     private ResourceBundle bundle;
+    private int CONFIRM_VALUE = 0;
 
     public ConfirmCloseFrameAdapter(ResourceBundle bundle) {
         updateBundle(bundle);
@@ -21,7 +22,7 @@ public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements Co
     public void internalFrameClosing(InternalFrameEvent e) {
         JInternalFrame frame = e.getInternalFrame();
         int option = getOptionForWindowAndBundle(frame.getTitle(), bundle);
-        if (option == 0) {
+        if (option == CONFIRM_VALUE) {
             frame.setVisible(false);
             frame.dispose();
         }
