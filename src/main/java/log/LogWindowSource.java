@@ -12,7 +12,7 @@ public class LogWindowSource {
 
     public LogWindowSource(int iQueueLength) {
         m_iQueueLength = iQueueLength;
-        m_messages = new ConcurrentLinkedQueue<>();//потокобезопасная очередь
+        m_messages = new ConcurrentLinkedQueue<>();
         m_listeners = new ConcurrentLinkedQueue<>();
     }
 
@@ -25,7 +25,7 @@ public class LogWindowSource {
 
     public void unregisterListener(LogChangeListener listener) {
         synchronized (m_listeners) {
-            m_listeners.remove(listener);//удаляем первого найденного лисенера, который равен лисенеру из аргумента
+            m_listeners.remove(listener);
             m_activeListeners = m_listeners.toArray(new LogChangeListener[0]);
         }
     }

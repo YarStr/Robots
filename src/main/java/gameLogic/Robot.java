@@ -40,7 +40,7 @@ public class Robot {
 
     private void updateAngularVelocity(double angleToTarget) {
         if (Math.abs(direction - angleToTarget) < 10e-7) {
-            angularVelocity = direction;
+            angularVelocity = 0;
         } else if (direction >= Math.PI) {
             if (direction - Math.PI < angleToTarget && angleToTarget < direction)
                 angularVelocity = -maxAngularVelocity;
