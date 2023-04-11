@@ -32,10 +32,16 @@ public class MainApplicationFrame extends JFrame {
         setContentPane(desktopPane);
         addWorkingWindows();
         setJMenuBar(generateMenuBar());
-        setTitle(bundle.getString("main.title"));
+        setNameAndTitle();
         setDefaultTheme();
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(confirmCloseWindowAdapter);
+    }
+
+    private void setNameAndTitle() {
+        String title = bundle.getString("main.title");
+        setName(title);
+        setTitle(title);
     }
 
     public void setFrameSizeAndPaddings() {
@@ -179,7 +185,7 @@ public class MainApplicationFrame extends JFrame {
         setJMenuBar(generateMenuBar());
         gameWindow.setTitle(bundle.getString("gameWindow.title"));
         logWindow.setTitle(bundle.getString("logWindow.title"));
-        setTitle(bundle.getString("main.title"));
+        setNameAndTitle();
         confirmCloseWindowAdapter.updateBundle(bundle);
         confirmCloseFrameAdapter.updateBundle(bundle);
         revalidate();
