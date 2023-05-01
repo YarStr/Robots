@@ -1,5 +1,6 @@
 package gui.internalWindows;
 
+import gui.DataModel;
 import gui.closeAdapters.ConfirmCloseFrameAdapter;
 import log.LogChangeListener;
 import log.LogEntry;
@@ -7,19 +8,22 @@ import log.LogWindowSource;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener {
+public class LogWindow extends JInternalFrame implements LogChangeListener, PropertyChangeListener {
     private final LogWindowSource m_logSource;
 
     private final TextArea m_logContent;
 
-    ResourceBundle bundle;
+    DataModel dataModel;
 
-    public LogWindow(LogWindowSource logSource, ResourceBundle bundle, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
-        super(bundle.getString("logWindow.title"), true, true, true, true);
-        this.bundle = bundle;
+    public LogWindow(LogWindowSource logSource, DataModel dataModel, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
+        super(dataModel.getBundle().getString("logWindow.title"), true, true, true, true);
+        this.dataModel = dataModel;
+        this.dataModel.addBundleChangeListener(this);
         m_logSource = logSource;
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
@@ -55,5 +59,13 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
     @Override
     public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+            ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
+            setTitle(bundle.getString("logWindow.title"));
+        }
     }
 }
