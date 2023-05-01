@@ -24,10 +24,11 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     private final JMenuBar menuBar = new JMenuBar();
 
-    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(bundle);
-    private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(bundle);
-
     private final DataModel dataModel = new DataModel("messages", "ru");
+
+    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
+    private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(dataModel);
+
 
     private final GameWindow gameWindow = new GameWindow(dataModel, confirmCloseFrameAdapter);
 
@@ -185,6 +186,17 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println("YEAH");
+        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+            bundle = (ResourceBundle) evt.getNewValue();
+            resetUI();
+        }
+    }
+
+    private void resetUI() {
+        menuBar.removeAll();
+        setJMenuBar(generateMenuBar());
+        setNameAndTitle();
+        revalidate();
+        repaint();
     }
 }
