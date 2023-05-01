@@ -1,6 +1,6 @@
 package gui.internalWindows;
 
-import gui.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
@@ -56,4 +56,5 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
     public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);
     }
+
 }

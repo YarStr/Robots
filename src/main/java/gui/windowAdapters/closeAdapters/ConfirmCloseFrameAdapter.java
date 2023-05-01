@@ -1,14 +1,14 @@
-package gui.closeAdapters;
+package gui.windowAdapters.closeAdapters;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.util.ResourceBundle;
 
-public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements ConfirmClosable {
+public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements ConfirmCloseWindow {
 
     private ResourceBundle bundle;
-    private int CONFIRM_VALUE = 0;
+    private final int CONFIRM_VALUE = 0;
 
     public ConfirmCloseFrameAdapter(ResourceBundle bundle) {
         updateBundle(bundle);

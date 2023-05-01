@@ -1,6 +1,6 @@
 package gui.internalWindows;
 
-import gui.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 
 import javax.swing.*;
 import java.awt.*;
