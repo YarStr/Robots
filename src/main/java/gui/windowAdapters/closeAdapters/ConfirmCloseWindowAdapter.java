@@ -1,24 +1,22 @@
 package gui.windowAdapters.closeAdapters;
 
+import gui.DataModel;
+
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ResourceBundle;
 
-public class ConfirmCloseWindowAdapter extends WindowAdapter implements ConfirmCloseWindow {
+public class ConfirmCloseWindowAdapter extends WindowAdapter implements ConfirmClosable, PropertyChangeListener {
 
-    public ResourceBundle bundle;
-
-    public static String PROPERTY_NAME = "CloseWindow";
-
+    private ResourceBundle bundle;
     private int CONFIRM_VALUE = 0;
 
-    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
-
-    public ConfirmCloseWindowAdapter(ResourceBundle bundle) {
-        updateBundle(bundle);
+    public ConfirmCloseWindowAdapter(DataModel dataModel) {
+        dataModel.addBundleChangeListener(this);
+        updateBundle(dataModel.getBundle());
     }
 
     public void updateBundle(ResourceBundle bundle) {
@@ -37,7 +35,11 @@ public class ConfirmCloseWindowAdapter extends WindowAdapter implements ConfirmC
         }
     }
 
-    public void addCloseWindowListener(PropertyChangeListener listener) {
-        propChangeDispatcher.addPropertyChangeListener(PROPERTY_NAME, listener);
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+            ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
+            updateBundle(bundle);
+        }
     }
 }
