@@ -1,4 +1,4 @@
-package gui.closeAdapters;
+package gui.windowAdapters.closeAdapters;
 
 import gui.DataModel;
 
@@ -9,7 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
-public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements ConfirmClosable, PropertyChangeListener {
+public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements ConfirmCloseWindow, PropertyChangeListener {
 
     private ResourceBundle bundle;
     private int CONFIRM_VALUE = 0;

@@ -1,8 +1,8 @@
 package gui.internalWindows;
 
-import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
+import controller.Serializable;
 import gui.DataModel;
-import gui.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
@@ -14,7 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener, PropertyChangeListener {
+public class LogWindow extends JInternalFrame implements LogChangeListener, PropertyChangeListener, Serializable {
     private final LogWindowSource m_logSource;
 
     private final TextArea m_logContent;
@@ -67,6 +67,12 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Prop
         if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
             ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
             setTitle(bundle.getString("logWindow.title"));
+        }
+        else if (evt.getPropertyName().equals(DataModel.RESTORING_STATE)) {
+            deserialize(this);
+        }
+        else if (evt.getPropertyName().equals(DataModel.SAVING_STATE)) {
+            serialize(this);
         }
     }
 }

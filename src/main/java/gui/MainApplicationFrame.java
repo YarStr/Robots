@@ -1,13 +1,14 @@
 package gui;
 
-import controller.Controller;
-import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
-import gui.windowAdapters.closeAdapters.ConfirmCloseWindowAdapter;
+//import controller.Controller;
+
 import gui.internalWindows.GameWindow;
 import gui.internalWindows.LogWindow;
 import gui.menuItems.LocalizationMenuItems;
 import gui.menuItems.LookAndFeelMenuItems;
 import gui.menuItems.TestMenuItems;
+import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.windowAdapters.closeAdapters.ConfirmCloseWindowAdapter;
 import gui.windowAdapters.stateRecoveryAdapter.ConfirmStateRecovery;
 import log.Logger;
 
@@ -26,7 +27,9 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     private final JMenuBar menuBar = new JMenuBar();
 
-    private final DataModel dataModel = new DataModel("messages", "ru");
+    private final DataModel dataModel = new DataModel(bundle);
+
+    private final ConfirmStateRecovery confirmStateRecovery = new ConfirmStateRecovery(dataModel);
 
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
     private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(dataModel);
@@ -46,7 +49,6 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(confirmCloseWindowAdapter);
         addWindowListener(confirmStateRecovery);
-        createController();
     }
 
     private void setNameAndTitle() {
@@ -170,9 +172,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private JMenuItem getLocalizationMenuItem(LocalizationMenuItems menuName) {
         JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
         localization.addActionListener((event) -> {
-//            setLocalization(bundle.getBaseBundleName(), menuName.getResourceName());
             dataModel.updateBundle(bundle.getBaseBundleName(), menuName.getResourceName());
-//            resetUI();
             this.invalidate();
         });
         return localization;

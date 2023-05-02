@@ -6,9 +6,9 @@ import javax.swing.*;
 import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
 
-public class Serializer {
+public interface Serializable {
 
-    public void serialize(JInternalFrame window) {
+    default void serialize(JInternalFrame window) {
         String name = window.getClass().toString();
         Preferences prefs = Preferences.userNodeForPackage(window.getClass());
         prefs.putInt(name + "width", window.getWidth());
@@ -18,7 +18,7 @@ public class Serializer {
         prefs.putBoolean(name + "icon", window.isIcon());
     }
 
-    public void deserialize(JInternalFrame window) {
+    default void deserialize(JInternalFrame window) {
         String name = window.getClass().toString();
         Preferences prefs = Preferences.userNodeForPackage(window.getClass());
         window.setSize(prefs.getInt(name + "width", 0), prefs.getInt(name + "height", 0));

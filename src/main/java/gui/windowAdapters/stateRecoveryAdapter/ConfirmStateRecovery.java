@@ -1,32 +1,39 @@
 package gui.windowAdapters.stateRecoveryAdapter;
 
+import gui.DataModel;
 import gui.windowAdapters.ConfirmWindow;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 public class ConfirmStateRecovery extends WindowAdapter implements ConfirmWindow {
-    public static String PROPERTY_NAME = "OpenWindow";
-    private final ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
-
     private int CONFIRM_VALUE = 0;
 
-    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
+    private DataModel dataModel;
+
+    public ConfirmStateRecovery(DataModel dataModel) {
+        this.dataModel = dataModel;
+    }
 
     @Override
     public void windowOpened(WindowEvent e) {
-        int option = getOptionForWindowAndBundle("", bundle);
-        if (option == CONFIRM_VALUE) {
-            propChangeDispatcher.firePropertyChange(PROPERTY_NAME, null, null);
-        }
-    }
+        Preferences preferences = Preferences.userNodeForPackage(ResourceBundle.class);
+        try {
+            preferences.sync();
+            String baseName = preferences.get("baseName", "messages");
+            String language = preferences.get("language", "ru");
+            dataModel.updateBundle(baseName, language);
 
-    public void addOpenWindowListener(PropertyChangeListener listener) {
-        propChangeDispatcher.addPropertyChangeListener(PROPERTY_NAME, listener);
+            int option = getOptionForWindowAndBundle("", dataModel.getBundle());
+            if (option == CONFIRM_VALUE) {
+                dataModel.restoreState();
+            }
+        } catch (BackingStoreException ex) {
+            // файл с настройками отсутствует или недоступен
+        }
     }
 
     @Override

@@ -1,8 +1,8 @@
 package gui.internalWindows;
 
-import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
+import controller.Serializable;
 import gui.DataModel;
-import gui.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +10,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 
-public class GameWindow extends JInternalFrame {
-
-public class GameWindow extends JInternalFrame implements PropertyChangeListener {
+public class GameWindow extends JInternalFrame implements PropertyChangeListener, Serializable {
 
     public GameWindow(DataModel dataModel, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
         super(dataModel.getBundle().getString("gameWindow.title"), true, true, false, true);
@@ -31,6 +29,12 @@ public class GameWindow extends JInternalFrame implements PropertyChangeListener
         if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
             ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
             setTitle(bundle.getString("gameWindow.title"));
+        }
+        else if (evt.getPropertyName().equals(DataModel.RESTORING_STATE)) {
+            deserialize(this);
+        }
+        else if (evt.getPropertyName().equals(DataModel.SAVING_STATE)) {
+            serialize(this);
         }
     }
 }
