@@ -1,6 +1,5 @@
 package gui.internalWindows;
 
-import controller.Serializable;
 import gui.DataModel;
 import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 import log.LogChangeListener;
@@ -9,50 +8,49 @@ import log.LogWindowSource;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener, PropertyChangeListener, Serializable {
-    private final LogWindowSource m_logSource;
+public class LogWindow extends InternalWindow implements LogChangeListener {
+    private final LogWindowSource logSource;
 
-    private final TextArea m_logContent;
+    private final TextArea logContent = new TextArea("");
 
     DataModel dataModel;
 
     public LogWindow(LogWindowSource logSource, DataModel dataModel, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
-        super(dataModel.getBundle().getString("logWindow.title"), true, true, true, true);
-        this.dataModel = dataModel;
-        this.dataModel.addBundleChangeListener(this);
-        m_logSource = logSource;
-        m_logSource.registerListener(this);
-        m_logContent = new TextArea("");
-        m_logContent.setSize(200, 500);
+        super(WindowType.LOG, dataModel, confirmCloseFrameAdapter);
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(m_logContent, BorderLayout.CENTER);
-        getContentPane().add(panel);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addInternalFrameListener(confirmCloseFrameAdapter);
+        this.dataModel = dataModel;
+        this.logSource = logSource;
+        this.logSource.registerListener(this);
+
+        logContent.setSize(200, 500);
+        addLogContent();
+
         pack();
         updateLogContent();
     }
 
+    private void addLogContent() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(logContent, BorderLayout.CENTER);
+        getContentPane().add(panel);
+    }
+
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
-        for (LogEntry entry : m_logSource.all()) {
+        for (LogEntry entry : logSource.all()) {
             content.append(entry.getMessage()).append("\n");
         }
-        m_logContent.setText(content.toString());
-        m_logContent.invalidate();
+        logContent.setText(content.toString());
+        logContent.invalidate();
     }
 
     @Override
     public void doDefaultCloseAction() {
-        ConcurrentLinkedQueue<LogChangeListener> listeners = m_logSource.getListener();
+        ConcurrentLinkedQueue<LogChangeListener> listeners = logSource.getListener();
         for (LogChangeListener listener : listeners) {
-            m_logSource.unregisterListener(listener);
+            logSource.unregisterListener(listener);
         }
         super.doDefaultCloseAction();
     }
@@ -60,19 +58,5 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Prop
     @Override
     public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
-            ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
-            setTitle(bundle.getString("logWindow.title"));
-        }
-        else if (evt.getPropertyName().equals(DataModel.RESTORING_STATE)) {
-            deserialize(this);
-        }
-        else if (evt.getPropertyName().equals(DataModel.SAVING_STATE)) {
-            serialize(this);
-        }
     }
 }

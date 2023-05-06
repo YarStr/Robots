@@ -1,7 +1,5 @@
 package gui;
 
-//import controller.Controller;
-
 import gui.internalWindows.GameWindow;
 import gui.internalWindows.LogWindow;
 import gui.menuItems.LocalizationMenuItems;
@@ -30,13 +28,11 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private final DataModel dataModel = new DataModel(bundle);
 
     private final ConfirmStateRecovery confirmStateRecovery = new ConfirmStateRecovery(dataModel);
-
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
     private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(dataModel);
 
 
     private final GameWindow gameWindow = new GameWindow(dataModel, confirmCloseFrameAdapter);
-
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
 
     public MainApplicationFrame() {

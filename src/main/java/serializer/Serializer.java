@@ -1,4 +1,4 @@
-package controller;
+package serializer;
 
 import log.Logger;
 
@@ -6,9 +6,9 @@ import javax.swing.*;
 import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
 
-public interface Serializable {
+public class Serializer {
 
-    default void serialize(JInternalFrame window) {
+    public static void serialize(JInternalFrame window) {
         String name = window.getClass().toString();
         Preferences prefs = Preferences.userNodeForPackage(window.getClass());
         prefs.putInt(name + "width", window.getWidth());
@@ -18,7 +18,7 @@ public interface Serializable {
         prefs.putBoolean(name + "icon", window.isIcon());
     }
 
-    default void deserialize(JInternalFrame window) {
+    public static void deserialize(JInternalFrame window) {
         String name = window.getClass().toString();
         Preferences prefs = Preferences.userNodeForPackage(window.getClass());
         window.setSize(prefs.getInt(name + "width", 0), prefs.getInt(name + "height", 0));
