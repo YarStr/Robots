@@ -1,34 +1,42 @@
 package gui;
 
-import gui.closeAdapters.ConfirmCloseFrameAdapter;
-import gui.closeAdapters.ConfirmCloseWindowAdapter;
 import gui.internalWindows.GameWindow;
 import gui.internalWindows.LogWindow;
 import gui.menuItems.LocalizationMenuItems;
 import gui.menuItems.LookAndFeelMenuItems;
 import gui.menuItems.TestMenuItems;
+import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.windowAdapters.closeAdapters.ConfirmCloseWindowAdapter;
+import gui.windowAdapters.stateRecoveryAdapter.ConfirmStateRecovery;
 import log.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 
-public class MainApplicationFrame extends JFrame {
+public class MainApplicationFrame extends JFrame implements PropertyChangeListener {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     private final JMenuBar menuBar = new JMenuBar();
 
-    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(bundle);
-    private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(bundle);
+    private final DataModel dataModel = new DataModel(bundle);
 
-    private final GameWindow gameWindow = new GameWindow(bundle, confirmCloseFrameAdapter);
-    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), bundle, confirmCloseFrameAdapter);
+    private final ConfirmStateRecovery confirmStateRecovery = new ConfirmStateRecovery(dataModel);
+    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
+    private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(dataModel);
+
+
+    private final GameWindow gameWindow = new GameWindow(dataModel, confirmCloseFrameAdapter);
+    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
 
     public MainApplicationFrame() {
+        dataModel.addBundleChangeListener(this);
         setContentPane(desktopPane);
         addWorkingWindows();
         setJMenuBar(generateMenuBar());
@@ -36,6 +44,7 @@ public class MainApplicationFrame extends JFrame {
         setDefaultTheme();
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(confirmCloseWindowAdapter);
+        addWindowListener(confirmStateRecovery);
     }
 
     private void setNameAndTitle() {
@@ -159,8 +168,7 @@ public class MainApplicationFrame extends JFrame {
     private JMenuItem getLocalizationMenuItem(LocalizationMenuItems menuName) {
         JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
         localization.addActionListener((event) -> {
-            setLocalization(bundle.getBaseBundleName(), menuName.getResourceName());
-            resetUI();
+            dataModel.updateBundle(bundle.getBaseBundleName(), menuName.getResourceName());
             this.invalidate();
         });
         return localization;
@@ -176,18 +184,18 @@ public class MainApplicationFrame extends JFrame {
         }
     }
 
-    private void setLocalization(String resourceName, String nameLocal) {
-        bundle = ResourceBundle.getBundle(resourceName, new Locale(nameLocal));
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+            bundle = (ResourceBundle) evt.getNewValue();
+            resetUI();
+        }
     }
 
     private void resetUI() {
         menuBar.removeAll();
         setJMenuBar(generateMenuBar());
-        gameWindow.setTitle(bundle.getString("gameWindow.title"));
-        logWindow.setTitle(bundle.getString("logWindow.title"));
         setNameAndTitle();
-        confirmCloseWindowAdapter.updateBundle(bundle);
-        confirmCloseFrameAdapter.updateBundle(bundle);
         revalidate();
         repaint();
     }
