@@ -1,6 +1,6 @@
-package gui.menuItems;
+package gui.menu.items;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 import java.util.ResourceBundle;
 
 public enum LookAndFeelMenuItems {

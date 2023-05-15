@@ -1,11 +1,11 @@
 package gameLogic;
 
-public class UserRobot extends Robot{
-    private final double rotationSpeed = 0.3; // скорость вращения
-    private final double velocity = 8; // скорость перемещения
+public class UserRobot extends Robot {
+    private final double rotationSpeed = 0.1;
+    private final double velocity = 2;
 
-    public volatile double widthField;
-    public volatile double heightField;
+    public volatile double fieldWidth;
+    public volatile double fieldHeight;
 
     public UserRobot(double x, double y, double direction) {
         super(x, y, direction);
@@ -22,7 +22,7 @@ public class UserRobot extends Robot{
         updateDirection(newDirection);
     }
 
-    private void updateDirection(double newDirection){
+    private void updateDirection(double newDirection) {
         direction = asNormalizedRadians(newDirection);
     }
 
@@ -31,38 +31,31 @@ public class UserRobot extends Robot{
         double newY = y + velocity * Math.sin(direction);
         x = newX;
         y = newY;
-        correctPositions();
+        correctPosition();
     }
 
     public void goBack() {
-        double newX = x - velocity;
-        double newY = y - velocity;
-        updateCoordinates(newX, newY);
+        double newX = x - velocity * Math.cos(direction);
+        double newY = y - velocity * Math.sin(direction);
+        x = newX;
+        y = newY;
+        correctPosition();
     }
 
-    private void updateCoordinates(double newX, double newY){
-        x = newX * Math.cos(direction);
-        y = newY * Math.sin(direction);
-        correctPositions();
-    }
-
-    public void stop() {//вдруг понадобится
-    }
-
-    private void correctPositions() {
-        if (widthField != 0) {
-            double newX = applyLimits(x, widthField);
+    private void correctPosition() {
+        if (fieldWidth != 0) {
+            double newX = applyLimits(x, fieldWidth);
             x = newX;
         }
 
-        if (heightField != 0) {
-            double newY = applyLimits(y, heightField);
+        if (fieldHeight != 0) {
+            double newY = applyLimits(y, fieldHeight);
             y = newY;
         }
     }
 
-    public void correctSizeField(int width, int height) {
-        this.widthField = width;
-        this.heightField = height;
+    public void correctFieldSize(int width, int height) {
+        this.fieldWidth = width;
+        this.fieldHeight = height;
     }
 }

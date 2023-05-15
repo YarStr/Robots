@@ -29,13 +29,17 @@ public class InternalWindow extends JInternalFrame implements PropertyChangeList
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
-            ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
-            setTitle(bundle.getString(windowTitleKey));
+            updateBundleResources((ResourceBundle) evt.getNewValue());
+
         } else if (evt.getPropertyName().equals(DataModel.SAVING_STATE)) {
             Serializer.serialize(this);
 
         } else if (evt.getPropertyName().equals(DataModel.RESTORING_STATE)) {
             Serializer.deserialize(this);
         }
+    }
+
+    protected void updateBundleResources(ResourceBundle bundle) {
+        setTitle(bundle.getString(windowTitleKey));
     }
 }

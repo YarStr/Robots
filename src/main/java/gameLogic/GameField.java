@@ -3,35 +3,56 @@ package gameLogic;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameField {
+    private static final int WIN_SCORE_POINTS = 1;
     private int width;
     private int height;
+
     private final Target target;
     private final RobotEnemy robotEnemy;
     public final UserRobot userRobot;
-    public static String WIN_USER = "Winner user";
-    public static String WIN_ENEMY = "Winner enemy";
-    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
-    private boolean start = false;
 
+    public static String SCORE_CHANGED = "Score changed";
+    public static String GAME_OVER = "Game over";
+
+    private final PropertyChangeSupport scoreChangeDispatcher = new PropertyChangeSupport(this);
+
+    private boolean isGameOn = false;
+    private final HashMap<RobotType, Integer> score = new HashMap<>();
 
     public GameField(int width, int height) {
         updateFieldSize(width, height);
         target = new Target(50, 50);
         robotEnemy = new RobotEnemy(0, 0, 45);
         userRobot = new UserRobot(0, 0, 45);
-        userRobot.correctSizeField(width, height);
+        userRobot.correctFieldSize(width, height);
     }
 
-    public void addBundleChangeListener(PropertyChangeListener listener) {
-        propChangeDispatcher.addPropertyChangeListener(WIN_ENEMY, listener);
-        propChangeDispatcher.addPropertyChangeListener(WIN_USER, listener);
+    private void setScore() {
+        for (RobotType robot : RobotType.values()) {
+            setRobotScore(robot, 0);
+        }
     }
 
-    public void startGame(){
-        start = true;
+    public void addScoreChangeListener(PropertyChangeListener listener) {
+        scoreChangeDispatcher.addPropertyChangeListener(SCORE_CHANGED, listener);
+    }
+
+    public void addGameOverListener(PropertyChangeListener listener) {
+        scoreChangeDispatcher.addPropertyChangeListener(GAME_OVER, listener);
+    }
+
+    public void startGame() {
+        isGameOn = true;
+        setScore();
+    }
+
+    public void stopGame(RobotType winner) {
+        isGameOn = false;
+        scoreChangeDispatcher.firePropertyChange(GAME_OVER, null, winner);
     }
 
     public void updateFieldSize(int width, int height) {
@@ -46,26 +67,48 @@ public class GameField {
 
     public void applyLimits(int updatedWidth, int updatedHeight) {
         updateFieldSize(updatedWidth, updatedHeight);
-//        target.correctPosition(width, height);
+        target.correctPosition(width, height);
         robotEnemy.correctPosition(width, height);
-        userRobot.correctSizeField(width, height);
+        userRobot.correctFieldSize(width, height);
     }
 
     public void onModelUpdateEvent() {
-        if(start){
-            if (robotEnemy.getDistanceToTarget(target) < 0.5){
-                propChangeDispatcher.firePropertyChange(WIN_ENEMY, null, null);
-                generateNewTarget();
-            } else if (userRobot.getDistanceToTarget(target) < 3){
-                propChangeDispatcher.firePropertyChange(WIN_USER, null, null);
-                generateNewTarget();
-            }
+        if (isGameOn) {
             robotEnemy.turnToTarget(target);
             robotEnemy.move(width, height);
+
+            double enemyDistance = robotEnemy.getDistanceToTarget(target);
+            double userDistance = userRobot.getDistanceToTarget(target);
+
+            RobotType robotThatReachedTheTarget = getRobotThatReachedTheTarget(enemyDistance, userDistance);
+
+            if (robotThatReachedTheTarget != null) {
+                int scorePoints = score.get(robotThatReachedTheTarget) + 1;
+                setRobotScore(robotThatReachedTheTarget, scorePoints);
+                generateNewTarget();
+
+                if (scorePoints >= WIN_SCORE_POINTS)
+                    stopGame(robotThatReachedTheTarget);
+            }
         }
     }
 
-    public void generateNewTarget(){
+    private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
+        if (enemyDistance < 0.5) {
+            return RobotType.ENEMY;
+        }
+        if (userDistance < 12) {
+            return RobotType.USER;
+        }
+        return null;
+    }
+
+    private void setRobotScore(RobotType robot, int scorePoints) {
+        score.put(robot, scorePoints);
+        scoreChangeDispatcher.firePropertyChange(SCORE_CHANGED, robot, scorePoints);
+    }
+
+    private void generateNewTarget() {
         int newX = ThreadLocalRandom.current().nextInt(1, width);
         int newY = ThreadLocalRandom.current().nextInt(1, height);
         Point point = new Point();
@@ -103,5 +146,13 @@ public class GameField {
 
     public double getUserRobotDirection() {
         return userRobot.direction;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

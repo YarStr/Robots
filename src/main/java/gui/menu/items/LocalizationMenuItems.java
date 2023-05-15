@@ -1,4 +1,4 @@
-package gui.menuItems;
+package gui.menu.items;
 
 
 public enum LocalizationMenuItems {

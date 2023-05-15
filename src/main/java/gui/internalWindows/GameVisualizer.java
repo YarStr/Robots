@@ -4,21 +4,23 @@ import gameLogic.GameField;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static java.awt.event.KeyEvent.*;
-import static java.awt.event.KeyEvent.VK_W;
 
 public class GameVisualizer extends JPanel {
     private static Timer initTimer() {
         return new Timer("events generator", true);
     }
-    private final GameField gameField = new GameField(getWidth(), getHeight());
 
-    public GameVisualizer() {
+    private final GameField gameField;
+
+    public GameVisualizer(GameField gameField) {
+        this.gameField = gameField;
+
         Timer m_timer = initTimer();
 
         m_timer.schedule(new TimerTask() {
@@ -35,14 +37,7 @@ public class GameVisualizer extends JPanel {
             }
         }, 0, 10);
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-//                gameField.changeTargetPosition(e.getPoint());
-//                repaint();
-                gameField.startGame();
-            }
-        });
+        setBackground(new Color(255, 255, 255));
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -51,22 +46,7 @@ public class GameVisualizer extends JPanel {
             }
         });
 
-        addKeyListener(new KeyAdapter(){
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()){
-                    case VK_A -> gameField.userRobot.turnLeft();
-                    case VK_S -> gameField.userRobot.goBack();
-                    case VK_D -> gameField.userRobot.turnRight();
-                    case VK_W -> gameField.userRobot.goForward();
-                    default -> gameField.userRobot.stop();
-                }
-            }
-            @Override
-            public void keyReleased(KeyEvent e) {
-                gameField.userRobot.stop();
-            }
-        });
+        addKeyListener(new MultiKeyPressAdapter(gameField));
 
         setFocusable(true);
         requestFocus();

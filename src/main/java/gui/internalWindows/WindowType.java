@@ -11,6 +11,12 @@ public enum WindowType {
         public String getTitleKey() {
             return "logWindow.title";
         }
+    },
+
+    SCORE_BOARD {
+        public String getTitleKey() {
+            return "scoreBoardWindow.title";
+        }
     };
 
     public abstract String getTitleKey();

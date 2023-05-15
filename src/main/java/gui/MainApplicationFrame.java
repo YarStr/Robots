@@ -1,10 +1,11 @@
 package gui;
 
+import gameLogic.GameField;
+import gui.internalWindows.ConfirmGameRestartWindow;
 import gui.internalWindows.GameWindow;
 import gui.internalWindows.LogWindow;
-import gui.menuItems.LocalizationMenuItems;
-import gui.menuItems.LookAndFeelMenuItems;
-import gui.menuItems.TestMenuItems;
+import gui.internalWindows.ScoreBoardWindow;
+import gui.menu.MenuBar;
 import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 import gui.windowAdapters.closeAdapters.ConfirmCloseWindowAdapter;
 import gui.windowAdapters.stateRecoveryAdapter.ConfirmStateRecovery;
@@ -12,7 +13,7 @@ import log.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -22,26 +23,42 @@ import java.util.ResourceBundle;
 
 public class MainApplicationFrame extends JFrame implements PropertyChangeListener {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
-    private final JMenuBar menuBar = new JMenuBar();
 
+    private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
     private final DataModel dataModel = new DataModel(bundle);
+
+    private final GameField gameField = new GameField(400, 400);
 
     private final ConfirmStateRecovery confirmStateRecovery = new ConfirmStateRecovery(dataModel);
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
     private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(dataModel);
 
-
-    private final GameWindow gameWindow = new GameWindow(dataModel, confirmCloseFrameAdapter);
+    private final MenuBar menuBar = new MenuBar(dataModel, this);
+    private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseFrameAdapter);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
+    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseFrameAdapter);
+
+    private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dataModel, gameWindow, gameField);
 
     public MainApplicationFrame() {
         dataModel.addBundleChangeListener(this);
+        initializeContent();
+        setLook();
+        setCloseAndStateRecoveryOperations();
+    }
+
+    private void initializeContent() {
         setContentPane(desktopPane);
         addWorkingWindows();
-        setJMenuBar(generateMenuBar());
+        setJMenuBar(menuBar);
+    }
+
+    private void setLook() {
         setNameAndTitle();
         setDefaultTheme();
+    }
+
+    private void setCloseAndStateRecoveryOperations() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(confirmCloseWindowAdapter);
         addWindowListener(confirmStateRecovery);
@@ -62,6 +79,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private void addWorkingWindows() {
         addWindow(createLogWindow());
         addWindow(createGameWindow());
+        addWindow(createScoreBoardWindow());
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -84,104 +102,15 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         return gameWindow;
     }
 
-    private JMenuBar generateMenuBar() {
-        menuBar.add(getOptionsMenu());
-        menuBar.add(getSystemLookAndFeelMenu());
-        menuBar.add(getLocalization());
-        menuBar.add(getTestMenu());
-        return menuBar;
+    protected ScoreBoardWindow createScoreBoardWindow() {
+        scoreBoardWindow.setLocation(800, 10);
+        scoreBoardWindow.setSize(400, 200);
+        gameField.addScoreChangeListener(scoreBoardWindow);
+        return scoreBoardWindow;
     }
 
     private void setDefaultTheme() {
-        String mainSystemLookAndFeel = LookAndFeelMenuItems.NIMBUS.getClassName();
-        setLookAndFeel(mainSystemLookAndFeel);
-    }
-
-    private JMenu getOptionsMenu() {
-        JMenu fileMenu = getMenuWithNameAndDescription(
-                bundle.getString("jMenu.name"),
-                bundle.getString("fileMenu.description")
-        );
-        fileMenu.add(getExitButton());
-        return fileMenu;
-    }
-
-    private JMenu getSystemLookAndFeelMenu() {
-        JMenu lookAndFeelMenu = getMenuWithNameAndDescription(
-                bundle.getString("lookAndFeelMenu.name"),
-                bundle.getString("lookAndFeelMenu.description")
-        );
-        for (LookAndFeelMenuItems item : LookAndFeelMenuItems.values())
-            lookAndFeelMenu.add(getSystemLookAndFeelMenuItem(item));
-        return lookAndFeelMenu;
-    }
-
-    private JMenu getTestMenu() {
-        JMenu testMenu = getMenuWithNameAndDescription(
-                bundle.getString("testMenu.name"),
-                bundle.getString("testMenu.description")
-        );
-        testMenu.add(getTestMenuItem());
-        return testMenu;
-    }
-
-    private JMenu getLocalization() {
-        JMenu localization = getMenuWithNameAndDescription(
-                bundle.getString("local.name"),
-                bundle.getString("local.description")
-        );
-        for (LocalizationMenuItems item : LocalizationMenuItems.values())
-            localization.add(getLocalizationMenuItem(item));
-        return localization;
-    }
-
-    private JMenu getMenuWithNameAndDescription(String name, String description) {
-        JMenu menu = new JMenu(name);
-        menu.setMnemonic(KeyEvent.VK_T);
-        menu.getAccessibleContext().setAccessibleDescription(description);
-        return menu;
-    }
-
-    private JMenuItem getExitButton() {
-        JMenuItem exitButton = new JMenuItem(bundle.getString("exitButton.name"), KeyEvent.VK_S);
-        exitButton.addActionListener((event) ->
-            dispatchEvent(new WindowEvent(MainApplicationFrame.this, WindowEvent.WINDOW_CLOSING))
-        );
-        return exitButton;
-    }
-
-    private JMenuItem getSystemLookAndFeelMenuItem(LookAndFeelMenuItems menuName) {
-        JMenuItem systemLookAndFeel = new JMenuItem(menuName.getStringName(bundle), KeyEvent.VK_S);
-        systemLookAndFeel.addActionListener((event) -> {
-            setLookAndFeel(menuName.getClassName());
-            this.invalidate();
-        });
-        return systemLookAndFeel;
-    }
-
-    private JMenuItem getTestMenuItem() {
-        JMenuItem addLogMessageItem = new JMenuItem(TestMenuItems.NEW_MESSAGE.getStringName(bundle), KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) -> Logger.debug(TestMenuItems.NEW_MESSAGE.getCommand(bundle)));
-        return addLogMessageItem;
-    }
-
-    private JMenuItem getLocalizationMenuItem(LocalizationMenuItems menuName) {
-        JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
-        localization.addActionListener((event) -> {
-            dataModel.updateBundle(bundle.getBaseBundleName(), menuName.getResourceName());
-            this.invalidate();
-        });
-        return localization;
-    }
-
-    private void setLookAndFeel(String className) {
-        try {
-            UIManager.setLookAndFeel(className);
-            SwingUtilities.updateComponentTreeUI(this);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-                 UnsupportedLookAndFeelException e) {
-            Logger.debug(e.getMessage());
-        }
+        menuBar.setDefaultTheme();
     }
 
     @Override
@@ -192,9 +121,11 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         }
     }
 
+    public ActionListener getListener() {
+        return ((event) -> dispatchEvent(new WindowEvent(MainApplicationFrame.this, WindowEvent.WINDOW_CLOSING)));
+    }
+
     private void resetUI() {
-        menuBar.removeAll();
-        setJMenuBar(generateMenuBar());
         setNameAndTitle();
         revalidate();
         repaint();
