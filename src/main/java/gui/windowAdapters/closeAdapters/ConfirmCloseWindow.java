@@ -5,7 +5,6 @@ import gui.windowAdapters.ConfirmWindow;
 import java.util.ResourceBundle;
 
 public interface ConfirmCloseWindow extends ConfirmWindow {
-
     @Override
     default Object[] getOptions(ResourceBundle bundle) {
         return new Object[]{
@@ -15,8 +14,8 @@ public interface ConfirmCloseWindow extends ConfirmWindow {
     }
 
     @Override
-    default String getMessage(ResourceBundle bundle) {
-        return bundle.getString("close.message");
+    default String getMessage(ResourceBundle bundle, String additionalInfo) {
+        return bundle.getString("close.message") + " " + additionalInfo + "?";
     }
 
     @Override

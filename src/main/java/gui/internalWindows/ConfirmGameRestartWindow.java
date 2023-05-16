@@ -31,8 +31,8 @@ public class ConfirmGameRestartWindow implements ConfirmWindow, PropertyChangeLi
     }
 
     @Override
-    public String getMessage(ResourceBundle bundle) {
-        return "! " + bundle.getString("confirmRestartGame.text");
+    public String getMessage(ResourceBundle bundle, String additionInfo) {
+        return additionInfo + "!\n" + bundle.getString("confirmRestartGame.text") + "?";
     }
 
     @Override
@@ -46,12 +46,12 @@ public class ConfirmGameRestartWindow implements ConfirmWindow, PropertyChangeLi
             ResourceBundle bundle = dataModel.getBundle();
 
             RobotType winner = (RobotType) evt.getNewValue();
-            String message = switch (winner) {
+            String gameOverMessage = switch (winner) {
                 case USER -> bundle.getString("confirmRestartGame.winText");
                 case ENEMY -> bundle.getString("confirmRestartGame.loseText");
             };
 
-            int option = getOptionForWindowAndBundle(message, bundle);
+            int option = getOptionForWindow(bundle, gameOverMessage);
             if (option == CONFIRM_VALUE) {
                 gameWindow.startGame();
             }

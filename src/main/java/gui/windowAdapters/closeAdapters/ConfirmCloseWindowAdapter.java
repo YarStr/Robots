@@ -18,7 +18,7 @@ public class ConfirmCloseWindowAdapter extends WindowAdapter implements ConfirmC
     @Override
     public void windowClosing(WindowEvent e) {
         Window window = e.getWindow();
-        int option = getOptionForWindowAndBundle(window.getName(), dataModel.getBundle());
+        int option = getOptionForWindow(dataModel.getBundle(), window.getName());
         if (option == CONFIRM_VALUE) {
             dataModel.saveState();
             window.setVisible(false);

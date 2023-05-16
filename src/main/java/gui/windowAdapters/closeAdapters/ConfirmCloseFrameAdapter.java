@@ -26,7 +26,7 @@ public class ConfirmCloseFrameAdapter extends InternalFrameAdapter implements Co
     @Override
     public void internalFrameClosing(InternalFrameEvent e) {
         JInternalFrame frame = e.getInternalFrame();
-        int option = getOptionForWindowAndBundle(frame.getTitle(), bundle);
+        int option = getOptionForWindow(bundle, frame.getTitle());
         if (option == CONFIRM_VALUE) {
             frame.setVisible(false);
             frame.dispose();

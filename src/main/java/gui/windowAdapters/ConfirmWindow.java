@@ -4,8 +4,12 @@ import javax.swing.*;
 import java.util.ResourceBundle;
 
 public interface ConfirmWindow {
-    default int getOptionForWindowAndBundle(String windowTitle, ResourceBundle bundle) {
-        String message = getMessage(bundle) + " " + windowTitle + "?";
+    default int getOptionForWindow(ResourceBundle bundle) {
+        return getOptionForWindow(bundle, null);
+    }
+
+    default int getOptionForWindow(ResourceBundle bundle, String additionalInfo) {
+        String message = getMessage(bundle, additionalInfo);
         String title = getTitle(bundle);
         Object[] options = getOptions(bundle);
         return JOptionPane.showOptionDialog(
@@ -22,7 +26,7 @@ public interface ConfirmWindow {
 
     Object[] getOptions(ResourceBundle bundle);
 
-    String getMessage(ResourceBundle bundle);
+    String getMessage(ResourceBundle bundle, String additionalInfo);
 
     String getTitle(ResourceBundle bundle);
 }

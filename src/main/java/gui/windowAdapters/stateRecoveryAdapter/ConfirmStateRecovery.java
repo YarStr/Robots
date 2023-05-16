@@ -27,7 +27,7 @@ public class ConfirmStateRecovery extends WindowAdapter implements ConfirmWindow
             String language = preferences.get("language", "ru");
             dataModel.updateBundle(baseName, language);
 
-            int option = getOptionForWindowAndBundle("", dataModel.getBundle());
+            int option = getOptionForWindow(dataModel.getBundle());
             if (option == CONFIRM_VALUE) {
                 dataModel.restoreState();
             }
@@ -45,8 +45,8 @@ public class ConfirmStateRecovery extends WindowAdapter implements ConfirmWindow
     }
 
     @Override
-    public String getMessage(ResourceBundle bundle) {
-        return bundle.getString("stateRecovery.message");
+    public String getMessage(ResourceBundle bundle, String additionalInfo) {
+        return bundle.getString("stateRecovery.message") + "?";
     }
 
     @Override
