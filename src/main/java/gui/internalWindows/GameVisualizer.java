@@ -46,7 +46,7 @@ public class GameVisualizer extends JPanel {
             }
         });
 
-        addKeyListener(new MultiKeyPressAdapter(gameField));
+        addKeyListener(new KeyPressAdapter(gameField));
 
         setFocusable(true);
         requestFocus();
@@ -62,7 +62,7 @@ public class GameVisualizer extends JPanel {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         drawRobotEnemy(g2d, gameField.getRobotEnemyX(), gameField.getRobotEnemyY(), gameField.getRobotEnemyDirection());
-        drawUserRobot(g2d, gameField.getUserRobotX(), gameField.getUserRobotY(), gameField.getUserRobotDirection());
+        drawUserRobot(g2d, gameField.getUserRobotX(), gameField.getUserRobotY());
         drawTarget(g2d, gameField.getTargetX(), gameField.getTargetY());
     }
 
@@ -95,17 +95,17 @@ public class GameVisualizer extends JPanel {
         g.drawRect(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
 
-    private void drawUserRobot(Graphics2D g, int robotCenterX, int robotCenterY, double direction) {
-        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
+    private void drawUserRobot(Graphics2D g, int robotCenterX, int robotCenterY) {
+        AffineTransform t = AffineTransform.getRotateInstance(0, robotCenterX, robotCenterY);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
-        fillRect(g, robotCenterX, robotCenterY, 30, 10);
+        fillRect(g, robotCenterX, robotCenterY, 20, 20);
         g.setColor(Color.BLACK);
-        drawRect(g, robotCenterX, robotCenterY, 30, 10);
-        g.setColor(Color.WHITE);
-        fillRect(g, robotCenterX + 10, robotCenterY, 5, 5);
-        g.setColor(Color.BLACK);
-        drawRect(g, robotCenterX + 10, robotCenterY, 5, 5);
+        drawRect(g, robotCenterX, robotCenterY, 20, 20);
+
+//        fillRect(g, robotCenterX + 10, robotCenterY, 5, 5);
+//        g.setColor(Color.BLACK);
+//        drawRect(g, robotCenterX + 10, robotCenterY, 5, 5);
     }
 
     private void drawTarget(Graphics2D g, int x, int y) {

@@ -3,6 +3,7 @@ package gameLogic;
 public class Robot {
     public volatile double x;
     public volatile double y;
+
     public volatile double direction;
     public Robot(double x, double y, double direction) {
         this.x = x;
