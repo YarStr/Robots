@@ -1,5 +1,7 @@
 package gameLogic;
 
+import gui.internalWindows.UserRobotDirection;
+
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -7,7 +9,7 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameField {
-    private static final int WIN_SCORE_POINTS = 1;
+    private static final int WIN_SCORE_POINTS = 2;
     private int width;
     private int height;
 
@@ -23,17 +25,26 @@ public class GameField {
     private boolean isGameOn = false;
     private final HashMap<RobotType, Integer> score = new HashMap<>();
 
+    private HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
+
     public GameField(int width, int height) {
         updateFieldSize(width, height);
         target = new Target(50, 50);
         robotEnemy = new RobotEnemy(0, 0, 45);
-        userRobot = new UserRobot(0, 0, 45);
+        userRobot = new UserRobot(0, 0);
         userRobot.correctFieldSize(width, height);
+        setDirectionMove();
     }
 
     private void setScore() {
         for (RobotType robot : RobotType.values()) {
             setRobotScore(robot, 0);
+        }
+    }
+
+    private void setDirectionMove() {
+        for (UserRobotDirection state : UserRobotDirection.values()) {
+            directionMove.put(state, false);
         }
     }
 
@@ -52,6 +63,7 @@ public class GameField {
 
     public void stopGame(RobotType winner) {
         isGameOn = false;
+        setDirectionMove();
         scoreChangeDispatcher.firePropertyChange(GAME_OVER, null, winner);
     }
 
@@ -72,10 +84,15 @@ public class GameField {
         userRobot.correctFieldSize(width, height);
     }
 
+    public void updateDirection(UserRobotDirection direction, Boolean state){
+        directionMove.put(direction, state);
+    }
+
     public void onModelUpdateEvent() {
         if (isGameOn) {
             robotEnemy.turnToTarget(target);
             robotEnemy.move(width, height);
+            userRobot.move(directionMove);
 
             double enemyDistance = robotEnemy.getDistanceToTarget(target);
             double userDistance = userRobot.getDistanceToTarget(target);
@@ -97,7 +114,7 @@ public class GameField {
         if (enemyDistance < 0.5) {
             return RobotType.ENEMY;
         }
-        if (userDistance < 12) {
+        if (userDistance < 10) {
             return RobotType.USER;
         }
         return null;
@@ -144,9 +161,9 @@ public class GameField {
         return userRobot.getRoundedY();
     }
 
-    public double getUserRobotDirection() {
-        return userRobot.direction;
-    }
+//    public double getUserRobotDirection() {
+//        return userRobot.direction;
+//    }
 
     public int getWidth() {
         return width;
