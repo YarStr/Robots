@@ -5,6 +5,7 @@ public class Robot {
     public volatile double y;
 
     public volatile double direction;
+
     public Robot(double x, double y, double direction) {
         this.x = x;
         this.y = y;
@@ -32,6 +33,7 @@ public class Robot {
     public static int round(double value) {
         return (int) (value + 0.5);
     }
+
     public double getDistanceToTarget(Target target) {
         double diffX = x - target.x;
         double diffY = y - target.y;

@@ -1,6 +1,6 @@
 package gameLogic;
 
-public class RobotEnemy extends Robot{
+public class RobotEnemy extends Robot {
 
     public final double maxVelocity = 0.05;
     public final double maxAngularVelocity = 0.015;

@@ -25,7 +25,7 @@ public class GameField {
     private boolean isGameOn = false;
     private final HashMap<RobotType, Integer> score = new HashMap<>();
 
-    private HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
+    private final HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
 
     public GameField(int width, int height) {
         updateFieldSize(width, height);
@@ -84,7 +84,7 @@ public class GameField {
         userRobot.correctFieldSize(width, height);
     }
 
-    public void updateDirection(UserRobotDirection direction, Boolean state){
+    public void updateDirection(UserRobotDirection direction, Boolean state) {
         directionMove.put(direction, state);
     }
 
@@ -161,9 +161,6 @@ public class GameField {
         return userRobot.getRoundedY();
     }
 
-//    public double getUserRobotDirection() {
-//        return userRobot.direction;
-//    }
 
     public int getWidth() {
         return width;

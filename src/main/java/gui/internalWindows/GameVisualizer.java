@@ -102,10 +102,6 @@ public class GameVisualizer extends JPanel {
         fillRect(g, robotCenterX, robotCenterY, 20, 20);
         g.setColor(Color.BLACK);
         drawRect(g, robotCenterX, robotCenterY, 20, 20);
-
-//        fillRect(g, robotCenterX + 10, robotCenterY, 5, 5);
-//        g.setColor(Color.BLACK);
-//        drawRect(g, robotCenterX + 10, robotCenterY, 5, 5);
     }
 
     private void drawTarget(Graphics2D g, int x, int y) {
