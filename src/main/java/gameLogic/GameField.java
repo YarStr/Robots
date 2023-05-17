@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameField {
-    private static final int WIN_SCORE_POINTS = 2;
+    private static final int WIN_SCORE_POINTS = 5;
     private int width;
     private int height;
 
