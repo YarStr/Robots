@@ -1,10 +1,7 @@
 package gui;
 
 import gameLogic.GameField;
-import gui.internalWindows.ConfirmGameRestartWindow;
-import gui.internalWindows.GameWindow;
-import gui.internalWindows.LogWindow;
-import gui.internalWindows.ScoreBoardWindow;
+import gui.internalWindows.*;
 import gui.menu.MenuBar;
 import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
 import gui.windowAdapters.closeAdapters.ConfirmCloseWindowAdapter;
@@ -25,9 +22,9 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private final JDesktopPane desktopPane = new JDesktopPane();
 
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
-    private final DataModel dataModel = new DataModel(bundle);
 
     private final GameField gameField = new GameField(400, 400);
+    private final DataModel dataModel = new DataModel(bundle, gameField);
 
     private final ConfirmStateRecovery confirmStateRecovery = new ConfirmStateRecovery(dataModel);
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
@@ -37,6 +34,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseFrameAdapter);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
     private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseFrameAdapter);
+    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dataModel, confirmCloseFrameAdapter);
 
     private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dataModel, gameWindow, gameField);
 
@@ -80,6 +78,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         addWindow(createLogWindow());
         addWindow(createGameWindow());
         addWindow(createScoreBoardWindow());
+        addWindow(createRobotCoordinatesWindow());
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -107,6 +106,12 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         scoreBoardWindow.setSize(400, 200);
         gameField.addScoreChangeListener(scoreBoardWindow);
         return scoreBoardWindow;
+    }
+
+    protected RobotCoordinatesWindow createRobotCoordinatesWindow() {
+        robotCoordinatesWindow.setLocation(800, 220);
+        robotCoordinatesWindow.setSize(400, 200);
+        return robotCoordinatesWindow;
     }
 
     private void setDefaultTheme() {

@@ -17,6 +17,12 @@ public enum WindowType {
         public String getTitleKey() {
             return "scoreBoardWindow.title";
         }
+    },
+
+    ROBOT_COORDINATE {
+        public String getTitleKey() {
+            return "robotCoordinateWindow.title";
+        }
     };
 
     public abstract String getTitleKey();

@@ -3,8 +3,9 @@ package gameLogic;
 import gui.internalWindows.UserRobotDirection;
 
 import java.util.HashMap;
+import java.util.Observable;
 
-public class UserRobot {
+public class UserRobot extends Observable {
     private final double velocity = 1;
 
     public volatile double fieldWidth;
@@ -12,6 +13,7 @@ public class UserRobot {
 
     public volatile double x;
     public volatile double y;
+    public static String CHANGE_COORDINATES = "coordinates changed";
 
     public UserRobot(double x, double y) {
         this.x = x;
@@ -33,6 +35,9 @@ public class UserRobot {
             goRight();
         }
         correctPosition();
+        setChanged();
+        notifyObservers(CHANGE_COORDINATES);
+        clearChanged();
     }
 
     public void goRight() {

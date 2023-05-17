@@ -14,7 +14,7 @@ public class GameField {
     private int height;
 
     private final Target target;
-    private final RobotEnemy robotEnemy;
+    public final RobotEnemy robotEnemy;
     public final UserRobot userRobot;
 
     public static String SCORE_CHANGED = "Score changed";

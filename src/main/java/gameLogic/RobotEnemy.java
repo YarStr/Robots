@@ -1,6 +1,13 @@
 package gameLogic;
 
-public class RobotEnemy extends Robot {
+
+import java.util.Observable;
+
+public class RobotEnemy extends Observable {
+    public volatile double x;
+    public volatile double y;
+
+    public volatile double direction;
 
     public final double maxVelocity = 0.05;
     public final double maxAngularVelocity = 0.015;
@@ -10,8 +17,12 @@ public class RobotEnemy extends Robot {
     public double velocity = maxVelocity;
     public double angularVelocity = 0;
 
+    public static String CHANGE_COORDINATES = "coordinates changed";
+
     public RobotEnemy(double x, double y, double direction) {
-        super(x, y, direction);
+        this.x = x;
+        this.y = y;
+        this.direction = direction;
     }
 
     public void turnToTarget(Target target) {
@@ -48,6 +59,9 @@ public class RobotEnemy extends Robot {
         updateDirection();
         updateCoordinates();
         correctPosition(width, height);
+        setChanged();
+        notifyObservers(CHANGE_COORDINATES);
+        clearChanged();
     }
 
     private void updateVelocity() {
@@ -75,5 +89,32 @@ public class RobotEnemy extends Robot {
             double newY = applyLimits(y, height);
             y = newY;
         }
+    }
+
+    public double asNormalizedRadians(double angle) {
+        return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    }
+
+    public double applyLimits(double value, double max) {
+        double zero_value = 0;
+        return Math.min(Math.max(value, zero_value), max);
+    }
+
+    public int getRoundedX() {
+        return round(x);
+    }
+
+    public int getRoundedY() {
+        return round(y);
+    }
+
+    public static int round(double value) {
+        return (int) (value + 0.5);
+    }
+
+    public double getDistanceToTarget(Target target) {
+        double diffX = x - target.x;
+        double diffY = y - target.y;
+        return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 }
