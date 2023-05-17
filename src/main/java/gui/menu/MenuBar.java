@@ -1,11 +1,11 @@
 package gui.menu;
 
-import gui.DataModel;
 import gui.MainApplicationFrame;
 import gui.menu.items.LocalizationMenuItems;
 import gui.menu.items.LookAndFeelMenuItems;
 import gui.menu.items.TestMenuItems;
-import log.Logger;
+import logic.DataModel;
+import logic.log.Logger;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -19,13 +19,13 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
 
     private ResourceBundle bundle;
 
-    private final MainApplicationFrame mainWindow;
+    private final MainApplicationFrame mainApplicationFrame;
 
-    public MenuBar(DataModel dataModel, MainApplicationFrame mainWindow) {
+    public MenuBar(DataModel dataModel, MainApplicationFrame mainApplicationFrame) {
         super();
         this.dataModel = dataModel;
         this.bundle = dataModel.getBundle();
-        this.mainWindow = mainWindow;
+        this.mainApplicationFrame = mainApplicationFrame;
         dataModel.addBundleChangeListener(this);
         generateMenuBar();
     }
@@ -85,7 +85,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
 
     public JMenuItem getExitButton() {
         JMenuItem exitButton = new JMenuItem(bundle.getString("exitButton.name"), KeyEvent.VK_S);
-        exitButton.addActionListener(mainWindow.getListener());
+        exitButton.addActionListener(mainApplicationFrame.getListener());
         return exitButton;
     }
 
@@ -93,7 +93,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
         JMenuItem systemLookAndFeel = new JMenuItem(menuName.getStringName(bundle), KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(menuName.getClassName());
-            mainWindow.invalidate();
+            mainApplicationFrame.invalidate();
         });
         return systemLookAndFeel;
     }
@@ -108,7 +108,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
         JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
         localization.addActionListener((event) -> {
             dataModel.updateBundle(bundle.getBaseBundleName(), menuName.getResourceName());
-            mainWindow.invalidate();
+            mainApplicationFrame.invalidate();
         });
         return localization;
     }
@@ -116,7 +116,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
     private void setLookAndFeel(String className) {
         try {
             UIManager.setLookAndFeel(className);
-            SwingUtilities.updateComponentTreeUI(mainWindow);
+            SwingUtilities.updateComponentTreeUI(mainApplicationFrame);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                  UnsupportedLookAndFeelException e) {
             Logger.debug(e.getMessage());
@@ -125,7 +125,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
 
     public void setDefaultTheme() {
         setLookAndFeel(LookAndFeelMenuItems.NIMBUS.getClassName());
-        mainWindow.invalidate();
+        mainApplicationFrame.invalidate();
     }
 
     @Override

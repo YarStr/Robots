@@ -1,6 +1,6 @@
 package serializer;
 
-import log.Logger;
+import logic.log.Logger;
 
 import javax.swing.*;
 import java.beans.PropertyVetoException;

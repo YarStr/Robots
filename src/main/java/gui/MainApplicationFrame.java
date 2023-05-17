@@ -1,15 +1,16 @@
 package gui;
 
-import gameLogic.GameField;
-import gui.internalWindows.ConfirmGameRestartWindow;
-import gui.internalWindows.GameWindow;
-import gui.internalWindows.LogWindow;
-import gui.internalWindows.ScoreBoardWindow;
+import gui.adapters.ConfirmStateRecoveryAdapter;
+import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
+import gui.adapters.close.ConfirmCloseWindowAdapter;
 import gui.menu.MenuBar;
-import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
-import gui.windowAdapters.closeAdapters.ConfirmCloseWindowAdapter;
-import gui.windowAdapters.stateRecoveryAdapter.ConfirmStateRecovery;
-import log.Logger;
+import gui.windows.LogWindow;
+import gui.windows.game.ConfirmGameRestartWindow;
+import gui.windows.game.GameWindow;
+import gui.windows.game.ScoreBoardWindow;
+import logic.DataModel;
+import logic.game.GameField;
+import logic.log.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,14 +30,14 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
     private final GameField gameField = new GameField(400, 400);
 
-    private final ConfirmStateRecovery confirmStateRecovery = new ConfirmStateRecovery(dataModel);
+    private final ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dataModel);
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
-    private final ConfirmCloseFrameAdapter confirmCloseFrameAdapter = new ConfirmCloseFrameAdapter(dataModel);
+    private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dataModel);
 
     private final MenuBar menuBar = new MenuBar(dataModel, this);
-    private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseFrameAdapter);
-    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
-    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseFrameAdapter);
+    private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseInternalFrameAdapter);
+    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseInternalFrameAdapter);
+    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseInternalFrameAdapter);
 
     private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dataModel, gameWindow, gameField);
 
@@ -61,7 +62,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private void setCloseAndStateRecoveryOperations() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(confirmCloseWindowAdapter);
-        addWindowListener(confirmStateRecovery);
+        addWindowListener(confirmStateRecoveryAdapter);
     }
 
     private void setNameAndTitle() {
