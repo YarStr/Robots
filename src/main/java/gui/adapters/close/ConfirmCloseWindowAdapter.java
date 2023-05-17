@@ -8,8 +8,8 @@ import java.awt.event.WindowEvent;
 
 public class ConfirmCloseWindowAdapter extends WindowAdapter implements ConfirmCloseWindow {
 
-    private DataModel dataModel;
-    private int CONFIRM_VALUE = 0;
+    private final DataModel dataModel;
+    private final int CONFIRM_VALUE = 0;
 
     public ConfirmCloseWindowAdapter(DataModel dataModel) {
         this.dataModel = dataModel;

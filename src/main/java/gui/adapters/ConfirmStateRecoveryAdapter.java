@@ -9,9 +9,9 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class ConfirmStateRecoveryAdapter extends WindowAdapter implements ConfirmationWindow {
-    private int CONFIRM_VALUE = 0;
+    private final int CONFIRM_VALUE = 0;
 
-    private DataModel dataModel;
+    private final DataModel dataModel;
 
     public ConfirmStateRecoveryAdapter(DataModel dataModel) {
         this.dataModel = dataModel;

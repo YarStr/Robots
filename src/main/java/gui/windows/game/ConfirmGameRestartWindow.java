@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 
 public class ConfirmGameRestartWindow implements ConfirmationWindow, PropertyChangeListener {
 
-    private int CONFIRM_VALUE = 0;
+    private final int CONFIRM_VALUE = 0;
 
     private final DataModel dataModel;
     private final GameWindow gameWindow;

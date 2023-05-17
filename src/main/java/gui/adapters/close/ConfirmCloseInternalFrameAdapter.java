@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 public class ConfirmCloseInternalFrameAdapter extends InternalFrameAdapter implements ConfirmCloseWindow, PropertyChangeListener {
 
     private ResourceBundle bundle;
-    private int CONFIRM_VALUE = 0;
+    private final int CONFIRM_VALUE = 0;
 
     public ConfirmCloseInternalFrameAdapter(DataModel dataModel) {
         dataModel.addBundleChangeListener(this);
