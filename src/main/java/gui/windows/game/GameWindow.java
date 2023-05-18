@@ -18,6 +18,7 @@ public class GameWindow extends InternalWindow {
     private final GameField gameField;
 
     private final JButton startButton;
+    private final JButton zoomFocusButton;
 
     public GameWindow(GameField gameField, DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
         super(WindowType.GAME, dataModel, confirmCloseInternalFrameAdapter);
@@ -26,6 +27,7 @@ public class GameWindow extends InternalWindow {
         this.gameField = gameField;
         this.gameField.addGameOverListener(this);
         startButton = getStartButton();
+        zoomFocusButton = getZoomFocusButton();
 
         setSize(gameField.getWidth(), gameField.getHeight());
         addContentPanel(gameField);
@@ -64,10 +66,11 @@ public class GameWindow extends InternalWindow {
         panel.setLayout(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         panel.add(startButton, BorderLayout.WEST);
+        panel.add(zoomFocusButton, BorderLayout.EAST);
         return panel;
     }
 
-    public JButton getStartButton() {
+    private JButton getStartButton() {
         JButton button = new JButton(
                 new AbstractAction("Start logic.game") {
                     @Override
@@ -82,9 +85,26 @@ public class GameWindow extends InternalWindow {
         return button;
     }
 
+    private JButton getZoomFocusButton() {
+        JButton button = new JButton(
+                new AbstractAction("Change zoom target") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        gameField.changeZoomTarget();
+                    }
+                }
+        );
+        button.setFocusable(false);
+        button.setText(dataModel.getBundle().getString("changeZoomTarget.text"));
+        button.setVerticalTextPosition(AbstractButton.CENTER);
+        button.setHorizontalTextPosition(AbstractButton.CENTER);
+        return button;
+    }
+
     @Override
     protected void updateBundleResources(ResourceBundle bundle) {
         startButton.setText(bundle.getString("startGame.text"));
+        zoomFocusButton.setText(bundle.getString("changeZoomTarget.text"));
         super.updateBundleResources(bundle);
     }
 
