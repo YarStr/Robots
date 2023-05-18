@@ -151,7 +151,7 @@ public class GameField {
         return target.y;
     }
 
-    public int getUserRobotX() {
+    public int  getUserRobotX() {
         return userRobot.getRoundedX();
     }
 

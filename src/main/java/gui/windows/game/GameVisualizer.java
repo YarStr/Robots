@@ -19,6 +19,8 @@ public class GameVisualizer extends JPanel {
 
     private final GameField gameField;
 
+    private double zoomLevel = 2;
+
     public GameVisualizer(GameField gameField) {
         this.gameField = gameField;
 
@@ -61,31 +63,80 @@ public class GameVisualizer extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        Graphics2D g2d = (Graphics2D) g;
-        drawRobotEnemy(g2d, gameField.getRobotEnemyX(), gameField.getRobotEnemyY(), gameField.getRobotEnemyDirection());
-        drawUserRobot(g2d, gameField.getUserRobotX(), gameField.getUserRobotY());
-        drawTarget(g2d, gameField.getTargetX(), gameField.getTargetY());
+
+        Graphics2D graphics2D = (Graphics2D) g;
+        applyZoomLevel(graphics2D);
+
+        drawTarget(graphics2D);
+        drawUserRobot(graphics2D);
+        drawRobotEnemy(graphics2D);
     }
 
-    private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
-        g.fillOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
+    private void applyZoomLevel(Graphics2D graphics) {
+        int userPositionX = gameField.getUserRobotX();
+        int userPositionY = gameField.getUserRobotY();
+
+        AffineTransform transform = new AffineTransform();
+
+        transform.translate(userPositionX, userPositionY);
+        transform.scale(zoomLevel, zoomLevel);
+        transform.translate(-userPositionX, -userPositionY);
+
+        graphics.setTransform(transform);
     }
 
-    private static void drawOval(Graphics g, int centerX, int centerY, int diam1, int diam2) {
-        g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
+    private void drawRobotEnemy(Graphics2D graphics) {
+        int robotCenterX = gameField.getRobotEnemyX();
+        int robotCenterY = gameField.getRobotEnemyY();
+        double direction = gameField.getRobotEnemyDirection();
+
+        Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
+        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
+
+        enemyRenderGraphics.setColor(Color.MAGENTA);
+        fillOval(enemyRenderGraphics, robotCenterX, robotCenterY, 30, 10);
+
+        enemyRenderGraphics.setColor(Color.BLACK);
+        drawOval(enemyRenderGraphics, robotCenterX, robotCenterY, 30, 10);
+
+        enemyRenderGraphics.setColor(Color.WHITE);
+        fillOval(enemyRenderGraphics, robotCenterX + 10, robotCenterY, 5, 5);
+
+        enemyRenderGraphics.setColor(Color.BLACK);
+        drawOval(enemyRenderGraphics, robotCenterX + 10, robotCenterY, 5, 5);
+
+        enemyRenderGraphics.dispose();
     }
 
-    private void drawRobotEnemy(Graphics2D g, int robotCenterX, int robotCenterY, double direction) {
-        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY);
-        g.setTransform(t);
-        g.setColor(Color.MAGENTA);
-        fillOval(g, robotCenterX, robotCenterY, 30, 10);
-        g.setColor(Color.BLACK);
-        drawOval(g, robotCenterX, robotCenterY, 30, 10);
-        g.setColor(Color.WHITE);
-        fillOval(g, robotCenterX + 10, robotCenterY, 5, 5);
-        g.setColor(Color.BLACK);
-        drawOval(g, robotCenterX + 10, robotCenterY, 5, 5);
+
+    private void drawUserRobot(Graphics2D graphics) {
+        int robotCenterX = gameField.getUserRobotX();
+        int robotCenterY = gameField.getUserRobotY();
+
+        graphics.setColor(Color.MAGENTA);
+        fillRect(graphics, robotCenterX, robotCenterY, 20, 20);
+
+        graphics.setColor(Color.BLACK);
+        drawRect(graphics, robotCenterX, robotCenterY, 20, 20);
+    }
+
+    private void drawTarget(Graphics2D graphics) {
+        int x = gameField.getTargetX();
+        int y = gameField.getTargetY();
+
+        graphics.setColor(Color.GREEN);
+        fillOval(graphics, x, y, 5, 5);
+
+        graphics.setColor(Color.BLACK);
+        drawOval(graphics, x, y, 5, 5);
+    }
+
+    private static void fillOval(Graphics graphics, int centerX, int centerY, int diam1, int diam2) {
+        graphics.fillOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
+    }
+
+    private static void drawOval(Graphics graphics, int centerX, int centerY, int diam1, int diam2) {
+        graphics.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
 
     private static void fillRect(Graphics g, int centerX, int centerY, int diam1, int diam2) {
@@ -94,23 +145,5 @@ public class GameVisualizer extends JPanel {
 
     private static void drawRect(Graphics g, int centerX, int centerY, int diam1, int diam2) {
         g.drawRect(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
-    }
-
-    private void drawUserRobot(Graphics2D g, int robotCenterX, int robotCenterY) {
-        AffineTransform t = AffineTransform.getRotateInstance(0, robotCenterX, robotCenterY);
-        g.setTransform(t);
-        g.setColor(Color.MAGENTA);
-        fillRect(g, robotCenterX, robotCenterY, 20, 20);
-        g.setColor(Color.BLACK);
-        drawRect(g, robotCenterX, robotCenterY, 20, 20);
-    }
-
-    private void drawTarget(Graphics2D g, int x, int y) {
-        AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
-        g.setTransform(t);
-        g.setColor(Color.GREEN);
-        fillOval(g, x, y, 5, 5);
-        g.setColor(Color.BLACK);
-        drawOval(g, x, y, 5, 5);
     }
 }
