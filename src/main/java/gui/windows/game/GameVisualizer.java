@@ -2,11 +2,14 @@ package gui.windows.game;
 
 import gui.adapters.KeyPressAdapter;
 import logic.game.GameField;
+import logic.game.RobotType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,7 +22,8 @@ public class GameVisualizer extends JPanel {
 
     private final GameField gameField;
 
-    private double zoomLevel = 2;
+    private double zoomLevel = 1;
+
 
     public GameVisualizer(GameField gameField) {
         this.gameField = gameField;
@@ -51,9 +55,29 @@ public class GameVisualizer extends JPanel {
 
         addKeyListener(new KeyPressAdapter(gameField));
 
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_EQUALS -> increaseZoomLevel();
+                    case KeyEvent.VK_MINUS -> decreaseZoomLevel();
+                }
+            }
+        });
+
         setFocusable(true);
         requestFocus();
         setDoubleBuffered(true);
+    }
+
+    private void increaseZoomLevel() {
+        if (zoomLevel < 2)
+            zoomLevel += 0.2;
+    }
+
+    private void decreaseZoomLevel() {
+        if (zoomLevel > 1)
+            zoomLevel -= 0.2;
     }
 
     protected void onRedrawEvent() {
@@ -73,8 +97,16 @@ public class GameVisualizer extends JPanel {
     }
 
     private void applyZoomLevel(Graphics2D graphics) {
-        int userPositionX = gameField.getUserRobotX();
-        int userPositionY = gameField.getUserRobotY();
+        int userPositionX;
+        int userPositionY;
+
+        if (gameField.getZoomTarget().equals(RobotType.ENEMY)) {
+            userPositionX = gameField.getRobotEnemyX();
+            userPositionY = gameField.getRobotEnemyY();
+        } else {
+            userPositionX = gameField.getUserRobotX();
+            userPositionY = gameField.getUserRobotY();
+        }
 
         AffineTransform transform = new AffineTransform();
 

@@ -15,6 +15,8 @@ public class GameField {
     private final RobotEnemy robotEnemy;
     public final UserRobot userRobot;
 
+    private RobotType zoomTarget = RobotType.USER;
+
     public static String SCORE_CHANGED = "Score changed";
     public static String GAME_OVER = "Game over";
 
@@ -166,5 +168,16 @@ public class GameField {
 
     public int getHeight() {
         return height;
+    }
+
+    public RobotType getZoomTarget() {
+        return zoomTarget;
+    }
+
+    public void changeZoomTarget() {
+        switch (zoomTarget) {
+            case USER -> zoomTarget = RobotType.ENEMY;
+            case ENEMY -> zoomTarget = RobotType.USER;
+        }
     }
 }
