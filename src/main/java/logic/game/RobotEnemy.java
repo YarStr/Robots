@@ -1,6 +1,14 @@
 package logic.game;
 
-public class RobotEnemy extends Robot {
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+public class RobotEnemy{
+    public volatile double x;
+    public volatile double y;
+
+    public volatile double direction;
 
     public final double maxVelocity = 0.05;
     public final double maxAngularVelocity = 0.015;
@@ -10,8 +18,14 @@ public class RobotEnemy extends Robot {
     public double velocity = maxVelocity;
     public double angularVelocity = 0;
 
+    public static String CHANGE_COORDINATES = "coordinates  of enemy robot changed";
+    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
+
+
     public RobotEnemy(double x, double y, double direction) {
-        super(x, y, direction);
+        this.x = x;
+        this.y = y;
+        this.direction = direction;
     }
 
     public void turnToTarget(Target target) {
@@ -48,6 +62,7 @@ public class RobotEnemy extends Robot {
         updateDirection();
         updateCoordinates();
         correctPosition(width, height);
+        propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.ENEMY);
     }
 
     private void updateVelocity() {
@@ -75,5 +90,36 @@ public class RobotEnemy extends Robot {
             double newY = applyLimits(y, height);
             y = newY;
         }
+    }
+
+    public double asNormalizedRadians(double angle) {
+        return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+    }
+
+    public double applyLimits(double value, double max) {
+        double zero_value = 0;
+        return Math.min(Math.max(value, zero_value), max);
+    }
+
+    public int getRoundedX() {
+        return round(x);
+    }
+
+    public int getRoundedY() {
+        return round(y);
+    }
+
+    public int round(double value) {
+        return (int) (value + 0.5);
+    }
+
+    public int getDistanceToTarget(Target target) {
+        double diffX = x - target.x;
+        double diffY = y - target.y;
+        return round(Math.sqrt(diffX * diffX + diffY * diffY));
+    }
+
+    public void addDataChangeListener(PropertyChangeListener listener) {
+        propChangeDispatcher.addPropertyChangeListener(CHANGE_COORDINATES, listener);
     }
 }

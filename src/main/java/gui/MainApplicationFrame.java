@@ -26,15 +26,20 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private final JDesktopPane desktopPane = new JDesktopPane();
 
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
-    private final DataModel dataModel = new DataModel(bundle);
 
     private final GameField gameField = new GameField(400, 400);
+    private final DataModel dataModel = new DataModel(bundle, gameField);
 
     private final ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dataModel);
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
     private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dataModel);
 
     private final MenuBar menuBar = new MenuBar(dataModel, this);
+    private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseFrameAdapter);
+    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
+    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseFrameAdapter);
+    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dataModel, confirmCloseFrameAdapter);
+    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dataModel, confirmCloseFrameAdapter);
     private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseInternalFrameAdapter);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseInternalFrameAdapter);
     private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseInternalFrameAdapter);
@@ -81,6 +86,8 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         addWindow(createLogWindow());
         addWindow(createGameWindow());
         addWindow(createScoreBoardWindow());
+        addWindow(createRobotCoordinatesWindow());
+        addWindow(createDistanceToTargetWindow());
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -108,6 +115,18 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         scoreBoardWindow.setSize(400, 200);
         gameField.addScoreChangeListener(scoreBoardWindow);
         return scoreBoardWindow;
+    }
+
+    protected RobotCoordinatesWindow createRobotCoordinatesWindow() {
+        robotCoordinatesWindow.setLocation(800, 220);
+        robotCoordinatesWindow.setSize(400, 200);
+        return robotCoordinatesWindow;
+    }
+
+    protected DistanceToTargetWindow createDistanceToTargetWindow(){
+        distanceToTargetWindow.setLocation(800, 440);
+        distanceToTargetWindow.setSize(400, 200);
+        return distanceToTargetWindow;
     }
 
     private void setDefaultTheme() {
