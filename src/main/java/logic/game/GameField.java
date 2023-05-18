@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameField {
-    private static final int WIN_SCORE_POINTS = 5;
+    private static final int WIN_SCORE_POINTS = 2;
     private int width;
     private int height;
 
@@ -112,7 +112,7 @@ public class GameField {
         if (enemyDistance < 0.5) {
             return RobotType.ENEMY;
         }
-        if (userDistance < 10) {
+        if (userDistance < 0.5) {
             return RobotType.USER;
         }
         return null;

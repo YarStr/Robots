@@ -1,9 +1,6 @@
 package logic;
 
-import gameLogic.GameField;
-import gameLogic.RobotEnemy;
-import gameLogic.RobotType;
-import gameLogic.UserRobot;
+import logic.game.*;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;

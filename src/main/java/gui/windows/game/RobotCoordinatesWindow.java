@@ -1,8 +1,4 @@
-package gui.internalWindows;
-
-import gameLogic.RobotType;
-import gui.DataModel;
-import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
+package gui.windows.game;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,12 +6,18 @@ import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
+import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
+import gui.windows.InternalWindow;
+import gui.windows.WindowType;
+import logic.DataModel;
+import logic.game.RobotType;
+
 public class RobotCoordinatesWindow extends InternalWindow {
     private final HashMap<RobotType, Point> coordinates = new HashMap<>();
     private final JTextArea content = new JTextArea();
     private ResourceBundle bundle;
 
-    public RobotCoordinatesWindow(DataModel dataModel, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
+    public RobotCoordinatesWindow(DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseFrameAdapter) {
         super(WindowType.ROBOT_COORDINATE, dataModel, confirmCloseFrameAdapter);
         bundle = dataModel.getBundle();
         setCoordinates();

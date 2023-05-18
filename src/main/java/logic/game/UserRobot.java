@@ -83,10 +83,10 @@ public class UserRobot{
         this.fieldHeight = height;
     }
 
-    public int getDistanceToTarget(Target target) {
+    public double getDistanceToTarget(Target target) {
         double diffX = x - target.x;
         double diffY = y - target.y;
-        return round(Math.sqrt(diffX * diffX + diffY * diffY));
+        return Math.sqrt(diffX * diffX + diffY * diffY) - 11.0;
     }
 
     public int getRoundedX() {

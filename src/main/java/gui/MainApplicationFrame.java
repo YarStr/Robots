@@ -5,9 +5,7 @@ import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
 import gui.adapters.close.ConfirmCloseWindowAdapter;
 import gui.menu.MenuBar;
 import gui.windows.LogWindow;
-import gui.windows.game.ConfirmGameRestartWindow;
-import gui.windows.game.GameWindow;
-import gui.windows.game.ScoreBoardWindow;
+import gui.windows.game.*;
 import logic.DataModel;
 import logic.game.GameField;
 import logic.log.Logger;
@@ -35,15 +33,11 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dataModel);
 
     private final MenuBar menuBar = new MenuBar(dataModel, this);
-    private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseFrameAdapter);
-    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
-    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseFrameAdapter);
-    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dataModel, confirmCloseFrameAdapter);
-    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dataModel, confirmCloseFrameAdapter);
     private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseInternalFrameAdapter);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseInternalFrameAdapter);
     private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseInternalFrameAdapter);
-
+    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dataModel, confirmCloseInternalFrameAdapter);
+    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dataModel, confirmCloseInternalFrameAdapter);
     private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dataModel, gameWindow, gameField);
 
     public MainApplicationFrame() {

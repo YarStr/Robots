@@ -1,21 +1,23 @@
-package gui.internalWindows;
+package gui.windows.game;
 
-import gameLogic.RobotType;
-import gui.DataModel;
-import gui.windowAdapters.closeAdapters.ConfirmCloseFrameAdapter;
+import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
+import gui.windows.InternalWindow;
+import gui.windows.WindowType;
+import logic.DataModel;
+import logic.game.RobotType;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-public class DistanceToTargetWindow extends InternalWindow{
+public class DistanceToTargetWindow extends InternalWindow {
 
-    private final HashMap<RobotType, Integer> distance = new HashMap<>();
+    private final HashMap<RobotType, Double> distance = new HashMap<>();
     private final JTextArea content = new JTextArea();
     private ResourceBundle bundle;
 
-    public DistanceToTargetWindow(DataModel dataModel, ConfirmCloseFrameAdapter confirmCloseFrameAdapter) {
+    public DistanceToTargetWindow(DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseFrameAdapter) {
         super(WindowType.DISTANCE_TO_TARGET, dataModel, confirmCloseFrameAdapter);
         bundle = dataModel.getBundle();
         setDistances();
@@ -30,7 +32,7 @@ public class DistanceToTargetWindow extends InternalWindow{
 
     private void setDistances() {
         for (RobotType robot : RobotType.values())
-            distance.put(robot, 0);
+            distance.put(robot, 0.0);
     }
 
     protected void updateBundleResources(ResourceBundle bundle) {
@@ -42,14 +44,14 @@ public class DistanceToTargetWindow extends InternalWindow{
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(DataModel.UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET) ||
                 evt.getPropertyName().equals(DataModel.UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET)) {
-            updateDistance((RobotType) evt.getOldValue(), (Integer) evt.getNewValue());
+            updateDistance((RobotType) evt.getOldValue(), (Double) evt.getNewValue());
             updateContent();
         } else {
             super.propertyChange(evt);
         }
     }
 
-    private void updateDistance(RobotType oldValue, Integer newValue) {
+    private void updateDistance(RobotType oldValue, Double newValue) {
         distance.put(oldValue, newValue);
     }
 
