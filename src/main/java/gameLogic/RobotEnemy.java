@@ -1,9 +1,10 @@
 package gameLogic;
 
 
-import java.util.Observable;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-public class RobotEnemy extends Observable {
+public class RobotEnemy{
     public volatile double x;
     public volatile double y;
 
@@ -17,7 +18,9 @@ public class RobotEnemy extends Observable {
     public double velocity = maxVelocity;
     public double angularVelocity = 0;
 
-    public static String CHANGE_COORDINATES = "coordinates changed";
+    public static String CHANGE_COORDINATES = "coordinates  of enemy robot changed";
+    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
+
 
     public RobotEnemy(double x, double y, double direction) {
         this.x = x;
@@ -59,9 +62,7 @@ public class RobotEnemy extends Observable {
         updateDirection();
         updateCoordinates();
         correctPosition(width, height);
-        setChanged();
-        notifyObservers(CHANGE_COORDINATES);
-        clearChanged();
+        propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.ENEMY);
     }
 
     private void updateVelocity() {
@@ -108,13 +109,17 @@ public class RobotEnemy extends Observable {
         return round(y);
     }
 
-    public static int round(double value) {
+    public int round(double value) {
         return (int) (value + 0.5);
     }
 
-    public double getDistanceToTarget(Target target) {
+    public int getDistanceToTarget(Target target) {
         double diffX = x - target.x;
         double diffY = y - target.y;
-        return Math.sqrt(diffX * diffX + diffY * diffY);
+        return round(Math.sqrt(diffX * diffX + diffY * diffY));
+    }
+
+    public void addDataChangeListener(PropertyChangeListener listener) {
+        propChangeDispatcher.addPropertyChangeListener(CHANGE_COORDINATES, listener);
     }
 }

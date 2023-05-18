@@ -13,7 +13,7 @@ public class GameField {
     private int width;
     private int height;
 
-    private final Target target;
+    public final Target target;
     public final RobotEnemy robotEnemy;
     public final UserRobot userRobot;
 

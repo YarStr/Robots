@@ -2,10 +2,11 @@ package gameLogic;
 
 import gui.internalWindows.UserRobotDirection;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
-import java.util.Observable;
 
-public class UserRobot extends Observable {
+public class UserRobot{
     private final double velocity = 1;
 
     public volatile double fieldWidth;
@@ -13,7 +14,10 @@ public class UserRobot extends Observable {
 
     public volatile double x;
     public volatile double y;
-    public static String CHANGE_COORDINATES = "coordinates changed";
+
+    public static String CHANGE_COORDINATES = "coordinates  of user robot changed";
+    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
+
 
     public UserRobot(double x, double y) {
         this.x = x;
@@ -35,10 +39,9 @@ public class UserRobot extends Observable {
             goRight();
         }
         correctPosition();
-        setChanged();
-        notifyObservers(CHANGE_COORDINATES);
-        clearChanged();
+        propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.USER);
     }
+
 
     public void goRight() {
         double newX = x + velocity;
@@ -82,10 +85,10 @@ public class UserRobot extends Observable {
         this.fieldHeight = height;
     }
 
-    public double getDistanceToTarget(Target target) {
+    public int getDistanceToTarget(Target target) {
         double diffX = x - target.x;
         double diffY = y - target.y;
-        return Math.sqrt(diffX * diffX + diffY * diffY);
+        return round(Math.sqrt(diffX * diffX + diffY * diffY));
     }
 
     public int getRoundedX() {
@@ -96,7 +99,11 @@ public class UserRobot extends Observable {
         return round(y);
     }
 
-    public static int round(double value) {
+    public int round(double value) {
         return (int) (value + 0.5);
+    }
+
+    public void addDataChangeListener(PropertyChangeListener listener) {
+        propChangeDispatcher.addPropertyChangeListener(CHANGE_COORDINATES, listener);
     }
 }

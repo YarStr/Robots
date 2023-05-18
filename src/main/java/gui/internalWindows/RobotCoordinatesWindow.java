@@ -57,7 +57,7 @@ public class RobotCoordinatesWindow extends InternalWindow {
         String newContent = bundle.getString("userRobotCoordinates") +
                 ": x: " + coordinates.get(RobotType.USER).x +
                 ", y: " + coordinates.get(RobotType.USER).y + "\n" +
-                bundle.getString("enemyRobotCoordinates") + ": " +
+                bundle.getString("enemyRobotCoordinates") +
                 ": x: " + coordinates.get(RobotType.ENEMY).x +
                 ", y: " + coordinates.get(RobotType.ENEMY).y + "\n";
         content.setText(newContent);

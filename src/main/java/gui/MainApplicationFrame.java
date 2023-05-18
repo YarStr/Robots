@@ -35,6 +35,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseFrameAdapter);
     private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseFrameAdapter);
     private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dataModel, confirmCloseFrameAdapter);
+    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dataModel, confirmCloseFrameAdapter);
 
     private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dataModel, gameWindow, gameField);
 
@@ -79,6 +80,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         addWindow(createGameWindow());
         addWindow(createScoreBoardWindow());
         addWindow(createRobotCoordinatesWindow());
+        addWindow(createDistanceToTargetWindow());
     }
 
     protected void addWindow(JInternalFrame frame) {
@@ -112,6 +114,12 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         robotCoordinatesWindow.setLocation(800, 220);
         robotCoordinatesWindow.setSize(400, 200);
         return robotCoordinatesWindow;
+    }
+
+    protected DistanceToTargetWindow createDistanceToTargetWindow(){
+        distanceToTargetWindow.setLocation(800, 440);
+        distanceToTargetWindow.setSize(400, 200);
+        return distanceToTargetWindow;
     }
 
     private void setDefaultTheme() {

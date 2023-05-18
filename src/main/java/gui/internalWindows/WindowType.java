@@ -23,6 +23,11 @@ public enum WindowType {
         public String getTitleKey() {
             return "robotCoordinateWindow.title";
         }
+    },
+    DISTANCE_TO_TARGET {
+        public String getTitleKey() {
+            return "distanceToTargetWindow.title";
+        }
     };
 
     public abstract String getTitleKey();
