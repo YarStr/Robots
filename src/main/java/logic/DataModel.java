@@ -74,8 +74,8 @@ public class DataModel implements PropertyChangeListener {
     }
 
 
-    private void changeLocationUserRobot(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(UserRobot.CHANGE_COORDINATES)){
+    private void changeLocationEnemyRobot(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(RobotEnemy.CHANGE_COORDINATES)){
             Point coordinatesRobot = new Point(gameField.getRobotEnemyX(), gameField.getRobotEnemyY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_ENEMY_ROBOT, RobotType.ENEMY, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET,
@@ -83,8 +83,8 @@ public class DataModel implements PropertyChangeListener {
         }
     }
 
-    private void changeLocationEnemyRobot(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(RobotEnemy.CHANGE_COORDINATES)){
+    private void changeLocationUserRobot(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals(UserRobot.CHANGE_COORDINATES)){
             Point coordinatesRobot = new Point(gameField.getUserRobotX(), gameField.getUserRobotY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_USER_ROBOT, RobotType.USER, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET,

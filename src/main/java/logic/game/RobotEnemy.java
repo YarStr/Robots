@@ -113,10 +113,11 @@ public class RobotEnemy{
         return (int) (value + 0.5);
     }
 
-    public double getDistanceToTarget(Target target) {
+    public int getDistanceToTarget(Target target) {
         double diffX = x - target.x;
         double diffY = y - target.y;
-        return Math.sqrt(diffX * diffX + diffY * diffY);
+        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY));
+        return Math.max(distance, 0);
     }
 
     public void addDataChangeListener(PropertyChangeListener listener) {

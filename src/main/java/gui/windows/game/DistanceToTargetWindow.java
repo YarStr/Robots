@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
 
 public class DistanceToTargetWindow extends InternalWindow {
 
-    private final HashMap<RobotType, Double> distance = new HashMap<>();
+    private final HashMap<RobotType, Integer> distance = new HashMap<>();
     private final JTextArea content = new JTextArea();
     private ResourceBundle bundle;
 
@@ -32,7 +32,7 @@ public class DistanceToTargetWindow extends InternalWindow {
 
     private void setDistances() {
         for (RobotType robot : RobotType.values())
-            distance.put(robot, 0.0);
+            distance.put(robot, 0);
     }
 
     protected void updateBundleResources(ResourceBundle bundle) {
@@ -44,14 +44,14 @@ public class DistanceToTargetWindow extends InternalWindow {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(DataModel.UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET) ||
                 evt.getPropertyName().equals(DataModel.UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET)) {
-            updateDistance((RobotType) evt.getOldValue(), (Double) evt.getNewValue());
+            updateDistance((RobotType) evt.getOldValue(), (Integer) evt.getNewValue());
             updateContent();
         } else {
             super.propertyChange(evt);
         }
     }
 
-    private void updateDistance(RobotType oldValue, Double newValue) {
+    private void updateDistance(RobotType oldValue, Integer newValue) {
         distance.put(oldValue, newValue);
     }
 

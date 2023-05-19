@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 
-public class UserRobot{
+public class UserRobot {
     private final double velocity = 1;
 
     public volatile double fieldWidth;
@@ -83,10 +83,11 @@ public class UserRobot{
         this.fieldHeight = height;
     }
 
-    public double getDistanceToTarget(Target target) {
+    public int getDistanceToTarget(Target target) {
         double diffX = x - target.x;
         double diffY = y - target.y;
-        return Math.sqrt(diffX * diffX + diffY * diffY) - 11.0;
+        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY)) - 10;
+        return Math.max(distance, 0);
     }
 
     public int getRoundedX() {
