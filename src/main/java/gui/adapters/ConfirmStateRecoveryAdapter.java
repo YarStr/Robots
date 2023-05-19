@@ -1,6 +1,6 @@
 package gui.adapters;
 
-import logic.DataModel;
+import logic.Dispatcher;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -11,10 +11,10 @@ import java.util.prefs.Preferences;
 public class ConfirmStateRecoveryAdapter extends WindowAdapter implements ConfirmationWindow {
     private final int CONFIRM_VALUE = 0;
 
-    private final DataModel dataModel;
+    private final Dispatcher dispatcher;
 
-    public ConfirmStateRecoveryAdapter(DataModel dataModel) {
-        this.dataModel = dataModel;
+    public ConfirmStateRecoveryAdapter(Dispatcher dispatcher) {
+        this.dispatcher = dispatcher;
     }
 
     @Override
@@ -24,11 +24,11 @@ public class ConfirmStateRecoveryAdapter extends WindowAdapter implements Confir
             preferences.sync();
             String baseName = preferences.get("baseName", "messages");
             String language = preferences.get("language", "ru");
-            dataModel.updateBundle(baseName, language);
+            dispatcher.updateBundle(baseName, language);
 
-            int option = getOptionForWindow(dataModel.getBundle());
+            int option = getOptionForWindow(dispatcher.getBundle());
             if (option == CONFIRM_VALUE) {
-                dataModel.restoreState();
+                dispatcher.restoreState();
             }
         } catch (BackingStoreException ex) {
             // файл с настройками отсутствует или недоступен

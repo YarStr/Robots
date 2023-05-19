@@ -1,25 +1,26 @@
 package gui.windows.game;
 
+import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
+import gui.windows.InternalWindow;
+import gui.windows.WindowType;
+import logic.Dispatcher;
+import logic.game.RobotType;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
-import gui.windows.InternalWindow;
-import gui.windows.WindowType;
-import logic.DataModel;
-import logic.game.RobotType;
-
 public class RobotCoordinatesWindow extends InternalWindow {
     private final HashMap<RobotType, Point> coordinates = new HashMap<>();
     private final JTextArea content = new JTextArea();
     private ResourceBundle bundle;
 
-    public RobotCoordinatesWindow(DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseFrameAdapter) {
-        super(WindowType.ROBOT_COORDINATE, dataModel, confirmCloseFrameAdapter);
-        bundle = dataModel.getBundle();
+    public RobotCoordinatesWindow(Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseFrameAdapter) {
+        super(WindowType.ROBOT_COORDINATE, dispatcher, confirmCloseFrameAdapter);
+        bundle = dispatcher.getBundle();
+        dispatcher.addCoordinatesChangeListener(this);
         setCoordinates();
         addContent();
     }
@@ -42,8 +43,8 @@ public class RobotCoordinatesWindow extends InternalWindow {
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.UPDATE_COORDINATES_ENEMY_ROBOT) ||
-                evt.getPropertyName().equals(DataModel.UPDATE_COORDINATES_USER_ROBOT)) {
+        if (evt.getPropertyName().equals(Dispatcher.UPDATE_COORDINATES_ENEMY_ROBOT) ||
+                evt.getPropertyName().equals(Dispatcher.UPDATE_COORDINATES_USER_ROBOT)) {
             updateCoordinates((RobotType) evt.getOldValue(), (Point) evt.getNewValue());
             updateContent();
         } else {
@@ -56,12 +57,12 @@ public class RobotCoordinatesWindow extends InternalWindow {
     }
 
     private void updateContent() {
-        String newContent = bundle.getString("userRobotCoordinates") +
-                ": x: " + coordinates.get(RobotType.USER).x +
-                ", y: " + coordinates.get(RobotType.USER).y + "\n" +
-                bundle.getString("enemyRobotCoordinates") +
-                ": x: " + coordinates.get(RobotType.ENEMY).x +
-                ", y: " + coordinates.get(RobotType.ENEMY).y + "\n";
+        String newContent = bundle.getString("robotsCoordinatesWindow.user") +
+                ": " + coordinates.get(RobotType.USER).x +
+                ", " + coordinates.get(RobotType.USER).y + "\n" +
+                bundle.getString("robotsCoordinatesWindow.enemy") +
+                ": " + coordinates.get(RobotType.ENEMY).x +
+                ", " + coordinates.get(RobotType.ENEMY).y + "\n";
         content.setText(newContent);
         content.invalidate();
     }

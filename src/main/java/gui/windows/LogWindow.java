@@ -1,7 +1,7 @@
 package gui.windows;
 
 import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.log.LogChangeListener;
 import logic.log.LogEntry;
 import logic.log.LogWindowSource;
@@ -15,12 +15,12 @@ public class LogWindow extends InternalWindow implements LogChangeListener {
 
     private final TextArea logContent = new TextArea("");
 
-    DataModel dataModel;
+    Dispatcher dispatcher;
 
-    public LogWindow(LogWindowSource logSource, DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
-        super(WindowType.LOG, dataModel, confirmCloseInternalFrameAdapter);
+    public LogWindow(LogWindowSource logSource, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+        super(WindowType.LOG, dispatcher, confirmCloseInternalFrameAdapter);
 
-        this.dataModel = dataModel;
+        this.dispatcher = dispatcher;
         this.logSource = logSource;
         this.logSource.registerListener(this);
 

@@ -4,7 +4,7 @@ package logic.game;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class RobotEnemy{
+public class EnemyRobot {
     public volatile double x;
     public volatile double y;
 
@@ -22,7 +22,7 @@ public class RobotEnemy{
     private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
 
 
-    public RobotEnemy(double x, double y, double direction) {
+    public EnemyRobot(double x, double y, double direction) {
         this.x = x;
         this.y = y;
         this.direction = direction;

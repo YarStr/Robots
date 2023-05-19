@@ -4,7 +4,7 @@ import gui.MainApplicationFrame;
 import gui.menu.items.LocalizationMenuItems;
 import gui.menu.items.LookAndFeelMenuItems;
 import gui.menu.items.TestMenuItems;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.log.Logger;
 
 import javax.swing.*;
@@ -15,18 +15,18 @@ import java.util.ResourceBundle;
 
 public class MenuBar extends JMenuBar implements PropertyChangeListener {
 
-    private final DataModel dataModel;
+    private final Dispatcher dispatcher;
 
     private ResourceBundle bundle;
 
     private final MainApplicationFrame mainApplicationFrame;
 
-    public MenuBar(DataModel dataModel, MainApplicationFrame mainApplicationFrame) {
+    public MenuBar(Dispatcher dispatcher, MainApplicationFrame mainApplicationFrame) {
         super();
-        this.dataModel = dataModel;
-        this.bundle = dataModel.getBundle();
+        this.dispatcher = dispatcher;
+        this.bundle = dispatcher.getBundle();
         this.mainApplicationFrame = mainApplicationFrame;
-        dataModel.addBundleChangeListener(this);
+        dispatcher.addInternalWindowPropertyChangeListener(this);
         generateMenuBar();
     }
 
@@ -107,7 +107,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
     private JMenuItem getLocalizationMenuItem(LocalizationMenuItems menuName) {
         JMenuItem localization = new JMenuItem(menuName.getStringName(), KeyEvent.VK_S);
         localization.addActionListener((event) -> {
-            dataModel.updateBundle(bundle.getBaseBundleName(), menuName.getResourceName());
+            dispatcher.updateBundle(bundle.getBaseBundleName(), menuName.getResourceName());
             mainApplicationFrame.invalidate();
         });
         return localization;
@@ -130,7 +130,7 @@ public class MenuBar extends JMenuBar implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+        if (evt.getPropertyName().equals(Dispatcher.BUNDLE_CHANGED)) {
             bundle = (ResourceBundle) evt.getNewValue();
             removeAll();
             generateMenuBar();

@@ -3,7 +3,7 @@ package gui.windows.game;
 import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
 import gui.windows.InternalWindow;
 import gui.windows.WindowType;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.game.GameField;
 
 import javax.swing.*;
@@ -14,16 +14,16 @@ import java.beans.PropertyChangeEvent;
 import java.util.ResourceBundle;
 
 public class GameWindow extends InternalWindow {
-    private final DataModel dataModel;
+    private final Dispatcher dispatcher;
     private final GameField gameField;
 
     private final JButton startButton;
     private final JButton zoomFocusButton;
 
-    public GameWindow(GameField gameField, DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
-        super(WindowType.GAME, dataModel, confirmCloseInternalFrameAdapter);
+    public GameWindow(GameField gameField, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+        super(WindowType.GAME, dispatcher, confirmCloseInternalFrameAdapter);
 
-        this.dataModel = dataModel;
+        this.dispatcher = dispatcher;
         this.gameField = gameField;
         this.gameField.addGameOverListener(this);
         startButton = getStartButton();
@@ -79,7 +79,7 @@ public class GameWindow extends InternalWindow {
                     }
                 }
         );
-        button.setText(dataModel.getBundle().getString("startGame.text"));
+        button.setText(dispatcher.getBundle().getString("startGame.text"));
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.CENTER);
         return button;
@@ -95,7 +95,7 @@ public class GameWindow extends InternalWindow {
                 }
         );
         button.setFocusable(false);
-        button.setText(dataModel.getBundle().getString("changeZoomTarget.text"));
+        button.setText(dispatcher.getBundle().getString("changeZoomTarget.text"));
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.CENTER);
         return button;

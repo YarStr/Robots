@@ -1,7 +1,7 @@
 package gui.windows.game;
 
 import gui.adapters.ConfirmationWindow;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.game.GameField;
 import logic.game.RobotType;
 
@@ -13,12 +13,12 @@ public class ConfirmGameRestartWindow implements ConfirmationWindow, PropertyCha
 
     private final int CONFIRM_VALUE = 0;
 
-    private final DataModel dataModel;
+    private final Dispatcher dispatcher;
     private final GameWindow gameWindow;
 
 
-    public ConfirmGameRestartWindow(DataModel dataModel, GameWindow gameWindow, GameField gameField) {
-        this.dataModel = dataModel;
+    public ConfirmGameRestartWindow(Dispatcher dispatcher, GameWindow gameWindow, GameField gameField) {
+        this.dispatcher = dispatcher;
         this.gameWindow = gameWindow;
         gameField.addGameOverListener(this);
     }
@@ -43,7 +43,7 @@ public class ConfirmGameRestartWindow implements ConfirmationWindow, PropertyCha
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(GameField.GAME_OVER)) {
-            ResourceBundle bundle = dataModel.getBundle();
+            ResourceBundle bundle = dispatcher.getBundle();
 
             RobotType winner = (RobotType) evt.getNewValue();
             String gameOverMessage = switch (winner) {

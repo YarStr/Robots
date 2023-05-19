@@ -3,7 +3,7 @@ package gui.windows.game;
 import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
 import gui.windows.InternalWindow;
 import gui.windows.WindowType;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.game.GameField;
 import logic.game.RobotType;
 
@@ -17,9 +17,9 @@ public class ScoreBoardWindow extends InternalWindow {
     private ResourceBundle bundle;
     private final JTextArea content = new JTextArea();
 
-    public ScoreBoardWindow(DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
-        super(WindowType.SCORE_BOARD, dataModel, confirmCloseInternalFrameAdapter);
-        bundle = dataModel.getBundle();
+    public ScoreBoardWindow(Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+        super(WindowType.SCORE_BOARD, dispatcher, confirmCloseInternalFrameAdapter);
+        bundle = dispatcher.getBundle();
         setScore();
         addContent();
     }

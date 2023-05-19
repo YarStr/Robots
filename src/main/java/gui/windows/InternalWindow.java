@@ -1,7 +1,7 @@
 package gui.windows;
 
 import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
-import logic.DataModel;
+import logic.Dispatcher;
 import serializer.Serializer;
 
 import javax.swing.*;
@@ -12,11 +12,11 @@ import java.util.ResourceBundle;
 public class InternalWindow extends JInternalFrame implements PropertyChangeListener {
     private final String windowTitleKey;
 
-    public InternalWindow(WindowType windowType, DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
-        super(dataModel.getBundle().getString(windowType.getTitleKey()),
+    public InternalWindow(WindowType windowType, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+        super(dispatcher.getBundle().getString(windowType.getTitleKey()),
                 true, true, false, true);
         windowTitleKey = windowType.getTitleKey();
-        dataModel.addBundleChangeListener(this);
+        dispatcher.addInternalWindowPropertyChangeListener(this);
         setConfirmOnCloseOperation(confirmCloseInternalFrameAdapter);
         pack();
     }
@@ -28,13 +28,13 @@ public class InternalWindow extends JInternalFrame implements PropertyChangeList
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+        if (evt.getPropertyName().equals(Dispatcher.BUNDLE_CHANGED)) {
             updateBundleResources((ResourceBundle) evt.getNewValue());
 
-        } else if (evt.getPropertyName().equals(DataModel.SAVING_STATE)) {
+        } else if (evt.getPropertyName().equals(Dispatcher.SAVING_STATE)) {
             Serializer.serialize(this);
 
-        } else if (evt.getPropertyName().equals(DataModel.RESTORING_STATE)) {
+        } else if (evt.getPropertyName().equals(Dispatcher.RESTORING_STATE)) {
             Serializer.deserialize(this);
         }
     }

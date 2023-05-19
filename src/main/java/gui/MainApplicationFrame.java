@@ -6,7 +6,7 @@ import gui.adapters.close.ConfirmCloseWindowAdapter;
 import gui.menu.MenuBar;
 import gui.windows.LogWindow;
 import gui.windows.game.*;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.game.GameField;
 import logic.log.Logger;
 
@@ -26,22 +26,22 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
 
     private final GameField gameField = new GameField(400, 400);
-    private final DataModel dataModel = new DataModel(bundle, gameField);
+    private final Dispatcher dispatcher = new Dispatcher(bundle, gameField);
 
-    private final ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dataModel);
-    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dataModel);
-    private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dataModel);
+    private final ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dispatcher);
+    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dispatcher);
+    private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dispatcher);
 
-    private final MenuBar menuBar = new MenuBar(dataModel, this);
-    private final GameWindow gameWindow = new GameWindow(gameField, dataModel, confirmCloseInternalFrameAdapter);
-    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dataModel, confirmCloseInternalFrameAdapter);
-    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dataModel, confirmCloseInternalFrameAdapter);
-    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dataModel, confirmCloseInternalFrameAdapter);
-    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dataModel, confirmCloseInternalFrameAdapter);
-    private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dataModel, gameWindow, gameField);
+    private final MenuBar menuBar = new MenuBar(dispatcher, this);
+    private final GameWindow gameWindow = new GameWindow(gameField, dispatcher, confirmCloseInternalFrameAdapter);
+    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dispatcher, confirmCloseInternalFrameAdapter);
+    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dispatcher, confirmCloseInternalFrameAdapter);
+    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dispatcher, confirmCloseInternalFrameAdapter);
+    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dispatcher, confirmCloseInternalFrameAdapter);
+    private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dispatcher, gameWindow, gameField);
 
     public MainApplicationFrame() {
-        dataModel.addBundleChangeListener(this);
+        dispatcher.addInternalWindowPropertyChangeListener(this);
         initializeContent();
         setLook();
         setCloseAndStateRecoveryOperations();
@@ -106,20 +106,20 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
     protected ScoreBoardWindow createScoreBoardWindow() {
         scoreBoardWindow.setLocation(800, 10);
-        scoreBoardWindow.setSize(400, 200);
+        scoreBoardWindow.setSize(240, 100);
         gameField.addScoreChangeListener(scoreBoardWindow);
         return scoreBoardWindow;
     }
 
     protected RobotCoordinatesWindow createRobotCoordinatesWindow() {
-        robotCoordinatesWindow.setLocation(800, 220);
-        robotCoordinatesWindow.setSize(400, 200);
+        robotCoordinatesWindow.setLocation(800, 130);
+        robotCoordinatesWindow.setSize(240, 100);
         return robotCoordinatesWindow;
     }
 
     protected DistanceToTargetWindow createDistanceToTargetWindow(){
-        distanceToTargetWindow.setLocation(800, 440);
-        distanceToTargetWindow.setSize(400, 200);
+        distanceToTargetWindow.setLocation(800, 250);
+        distanceToTargetWindow.setSize(240, 100);
         return distanceToTargetWindow;
     }
 
@@ -129,7 +129,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+        if (evt.getPropertyName().equals(Dispatcher.BUNDLE_CHANGED)) {
             bundle = (ResourceBundle) evt.getNewValue();
             resetUI();
         }

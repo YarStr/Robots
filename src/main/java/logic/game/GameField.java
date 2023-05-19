@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameField {
-    private static final int WIN_SCORE_POINTS = 2;
+    private static final int WIN_SCORE_POINTS = 5;
     private int width;
     private int height;
 
     public final Target target;
-    public final RobotEnemy robotEnemy;
+    public final EnemyRobot enemyRobot;
     public final UserRobot userRobot;
 
     private RobotType zoomTarget = RobotType.USER;
@@ -30,7 +30,7 @@ public class GameField {
     public GameField(int width, int height) {
         updateFieldSize(width, height);
         target = new Target(50, 50);
-        robotEnemy = new RobotEnemy(0, 0, 45);
+        enemyRobot = new EnemyRobot(0, 0, 45);
         userRobot = new UserRobot(0, 0);
         userRobot.correctFieldSize(width, height);
         setDirectionMove();
@@ -80,7 +80,7 @@ public class GameField {
     public void applyLimits(int updatedWidth, int updatedHeight) {
         updateFieldSize(updatedWidth, updatedHeight);
         target.correctPosition(width, height);
-        robotEnemy.correctPosition(width, height);
+        enemyRobot.correctPosition(width, height);
         userRobot.correctFieldSize(width, height);
     }
 
@@ -90,11 +90,11 @@ public class GameField {
 
     public void onModelUpdateEvent() {
         if (isGameOn) {
-            robotEnemy.turnToTarget(target);
-            robotEnemy.move(width, height);
+            enemyRobot.turnToTarget(target);
+            enemyRobot.move(width, height);
             userRobot.move(directionMove);
 
-            double enemyDistance = robotEnemy.getDistanceToTarget(target);
+            double enemyDistance = enemyRobot.getDistanceToTarget(target);
             double userDistance = userRobot.getDistanceToTarget(target);
 
             RobotType robotThatReachedTheTarget = getRobotThatReachedTheTarget(enemyDistance, userDistance);
@@ -134,15 +134,15 @@ public class GameField {
     }
 
     public int getRobotEnemyX() {
-        return robotEnemy.getRoundedX();
+        return enemyRobot.getRoundedX();
     }
 
     public int getRobotEnemyY() {
-        return robotEnemy.getRoundedY();
+        return enemyRobot.getRoundedY();
     }
 
     public double getRobotEnemyDirection() {
-        return robotEnemy.direction;
+        return enemyRobot.direction;
     }
 
     public int getTargetX() {

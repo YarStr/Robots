@@ -3,7 +3,7 @@ package gui.windows.game;
 import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
 import gui.windows.InternalWindow;
 import gui.windows.WindowType;
-import logic.DataModel;
+import logic.Dispatcher;
 import logic.game.RobotType;
 
 import javax.swing.*;
@@ -17,9 +17,10 @@ public class DistanceToTargetWindow extends InternalWindow {
     private final JTextArea content = new JTextArea();
     private ResourceBundle bundle;
 
-    public DistanceToTargetWindow(DataModel dataModel, ConfirmCloseInternalFrameAdapter confirmCloseFrameAdapter) {
-        super(WindowType.DISTANCE_TO_TARGET, dataModel, confirmCloseFrameAdapter);
-        bundle = dataModel.getBundle();
+    public DistanceToTargetWindow(Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseFrameAdapter) {
+        super(WindowType.DISTANCE_TO_TARGET, dispatcher, confirmCloseFrameAdapter);
+        bundle = dispatcher.getBundle();
+        dispatcher.addDistanceChangeListener(this);
         setDistances();
         addContent();
     }
@@ -42,8 +43,8 @@ public class DistanceToTargetWindow extends InternalWindow {
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET) ||
-                evt.getPropertyName().equals(DataModel.UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET)) {
+        if (evt.getPropertyName().equals(Dispatcher.UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET) ||
+                evt.getPropertyName().equals(Dispatcher.UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET)) {
             updateDistance((RobotType) evt.getOldValue(), (Integer) evt.getNewValue());
             updateContent();
         } else {
@@ -56,9 +57,9 @@ public class DistanceToTargetWindow extends InternalWindow {
     }
 
     private void updateContent() {
-        String newContent = bundle.getString("distanceBetweenUserRobotAndTarget") +
+        String newContent = bundle.getString("distanceToTargetWindow.user") +
                 ": " + distance.get(RobotType.USER) + "\n" +
-                bundle.getString("distanceBetweenEnemyRobotAndTarget") +
+                bundle.getString("distanceToTargetWindow.enemy") +
                 ": " + distance.get(RobotType.ENEMY) + "\n";
         content.setText(newContent);
         content.invalidate();

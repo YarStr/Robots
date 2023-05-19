@@ -1,6 +1,6 @@
 package gui.adapters.close;
 
-import logic.DataModel;
+import logic.Dispatcher;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -14,9 +14,9 @@ public class ConfirmCloseInternalFrameAdapter extends InternalFrameAdapter imple
     private ResourceBundle bundle;
     private final int CONFIRM_VALUE = 0;
 
-    public ConfirmCloseInternalFrameAdapter(DataModel dataModel) {
-        dataModel.addBundleChangeListener(this);
-        updateBundle(dataModel.getBundle());
+    public ConfirmCloseInternalFrameAdapter(Dispatcher dispatcher) {
+        dispatcher.addInternalWindowPropertyChangeListener(this);
+        updateBundle(dispatcher.getBundle());
     }
 
     private void updateBundle(ResourceBundle bundle) {
@@ -35,7 +35,7 @@ public class ConfirmCloseInternalFrameAdapter extends InternalFrameAdapter imple
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(DataModel.BUNDLE_CHANGED)) {
+        if (evt.getPropertyName().equals(Dispatcher.BUNDLE_CHANGED)) {
             ResourceBundle bundle = (ResourceBundle) evt.getNewValue();
             updateBundle(bundle);
         }
