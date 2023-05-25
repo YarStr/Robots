@@ -17,15 +17,19 @@ public class EnemyRobot {
 
     public double velocity = maxVelocity;
     public double angularVelocity = 0;
+    public volatile int robotWidth;
+    public volatile int robotHeight;
 
     public static String CHANGE_COORDINATES = "coordinates  of enemy robot changed";
     private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
 
 
-    public EnemyRobot(double x, double y, double direction) {
+    public EnemyRobot(double x, double y, double direction, int robotWidth, int robotHeight) {
         this.x = x;
         this.y = y;
         this.direction = direction;
+        this.robotWidth = robotWidth;
+        this.robotHeight = robotHeight;
     }
 
     public void turnToTarget(Target target) {

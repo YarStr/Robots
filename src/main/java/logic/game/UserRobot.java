@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class UserRobot {
     private final double velocity = 1;
+    public volatile int XP = 100;
 
     public volatile double fieldWidth;
     public volatile double fieldHeight;
@@ -13,13 +14,18 @@ public class UserRobot {
     public volatile double x;
     public volatile double y;
 
+    public volatile int robotWidth;
+    public volatile int robotHeight;
+
     public static String CHANGE_COORDINATES = "coordinates  of user robot changed";
     private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
 
 
-    public UserRobot(double x, double y) {
+    public UserRobot(double x, double y, int robotWidth, int robotHeight) {
         this.x = x;
         this.y = y;
+        this.robotWidth = robotWidth;
+        this.robotHeight = robotHeight;
     }
 
 

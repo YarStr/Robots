@@ -15,6 +15,9 @@ public class GameField {
     public final EnemyRobot enemyRobot;
     public final UserRobot userRobot;
 
+    private Rectangle modelUserRobot;
+    private Rectangle modelEnemyRobot;
+
     private RobotType zoomTarget = RobotType.USER;
 
     public static String SCORE_CHANGED = "Score changed";
@@ -29,10 +32,11 @@ public class GameField {
 
     public GameField(int width, int height) {
         updateFieldSize(width, height);
-        target = new Target(50, 50);
-        enemyRobot = new EnemyRobot(0, 0, 45);
-        userRobot = new UserRobot(0, 0);
+        target = new Target(100, 100);
+        enemyRobot = new EnemyRobot(0, 0, 45, 30, 10);
+        userRobot = new UserRobot(240, 200, 20, 20);
         userRobot.correctFieldSize(width, height);
+        setModelsOfRobots();
         setDirectionMove();
     }
 
@@ -94,6 +98,14 @@ public class GameField {
             enemyRobot.move(width, height);
             userRobot.move(directionMove);
 
+            setModelsOfRobots();
+            getIntersectsOfRobots();
+
+            if (userRobot.XP == 0) {
+                stopGame(RobotType.ENEMY);
+                userRobot.XP = 100;
+            }
+
             double enemyDistance = enemyRobot.getDistanceToTarget(target);
             double userDistance = userRobot.getDistanceToTarget(target);
 
@@ -141,6 +153,14 @@ public class GameField {
         return enemyRobot.getRoundedY();
     }
 
+    public int getRobotEnemyWidth() {
+        return enemyRobot.robotWidth;
+    }
+
+    public int getRobotEnemyHeight() {
+        return enemyRobot.robotHeight;
+    }
+
     public double getRobotEnemyDirection() {
         return enemyRobot.direction;
     }
@@ -153,7 +173,7 @@ public class GameField {
         return target.y;
     }
 
-    public int  getUserRobotX() {
+    public int getUserRobotX() {
         return userRobot.getRoundedX();
     }
 
@@ -161,6 +181,13 @@ public class GameField {
         return userRobot.getRoundedY();
     }
 
+    public int getUserRobotWidth() {
+        return userRobot.robotWidth;
+    }
+
+    public int getUserRobotHeight() {
+        return userRobot.robotHeight;
+    }
 
     public int getWidth() {
         return width;
@@ -180,4 +207,45 @@ public class GameField {
             case ENEMY -> zoomTarget = RobotType.USER;
         }
     }
+
+    public void getIntersectsOfRobots() {
+        if (modelUserRobot.intersects(modelEnemyRobot)) {
+            updateUserRobotXP();
+            pushBackUserRobot();
+//            System.out.println(userRobot.XP);
+        }
+    }
+
+    private void pushBackUserRobot() {
+        int MIN_DISTANCE_BETWEEN_ROBOTS = 5;
+
+        if (getUserRobotX() < getRobotEnemyX()) {
+            int newX = getUserRobotX() - MIN_DISTANCE_BETWEEN_ROBOTS;
+            userRobot.x = newX;
+        } else {
+            int newX = getUserRobotX() + MIN_DISTANCE_BETWEEN_ROBOTS;
+            userRobot.x = newX;
+        }
+        if (getUserRobotY() < getRobotEnemyY()) {
+            int newY = getUserRobotY() - MIN_DISTANCE_BETWEEN_ROBOTS;
+            userRobot.y = newY;
+        } else {
+            int newY = getUserRobotY() + MIN_DISTANCE_BETWEEN_ROBOTS;
+            userRobot.y = newY;
+        }
+    }
+
+    private void updateUserRobotXP() {
+        int newXP = userRobot.XP - 5;
+        System.out.println(newXP);
+        userRobot.XP = newXP;
+    }
+
+    private void setModelsOfRobots() {
+        modelUserRobot = new Rectangle(getUserRobotX(), getUserRobotY(),
+                userRobot.robotWidth, userRobot.robotHeight);
+        modelEnemyRobot = new Rectangle(getRobotEnemyX(), getRobotEnemyY(),
+                enemyRobot.robotWidth, enemyRobot.robotHeight);
+    }
+
 }
