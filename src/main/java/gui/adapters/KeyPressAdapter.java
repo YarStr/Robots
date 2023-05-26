@@ -1,17 +1,17 @@
 package gui.adapters;
 
-import logic.game.GameField;
+import logic.game.GameController;
 import logic.game.UserRobotDirection;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class KeyPressAdapter extends KeyAdapter {
-    private final GameField gameField;
+    private final GameController gameController;
 
 
-    public KeyPressAdapter(GameField gameField) {
-        this.gameField = gameField;
+    public KeyPressAdapter(GameController gameController) {
+        this.gameController = gameController;
     }
 
     @Override
@@ -26,10 +26,10 @@ public class KeyPressAdapter extends KeyAdapter {
 
     private void changeState(KeyEvent e, boolean state) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> gameField.updateDirection(UserRobotDirection.MOVE_UP, state);
-            case KeyEvent.VK_A -> gameField.updateDirection(UserRobotDirection.MOVE_LEFT, state);
-            case KeyEvent.VK_S -> gameField.updateDirection(UserRobotDirection.MOVE_DOWN, state);
-            case KeyEvent.VK_D -> gameField.updateDirection(UserRobotDirection.MOVE_RIGHT, state);
+            case KeyEvent.VK_W -> gameController.updateDirection(UserRobotDirection.MOVE_UP, state);
+            case KeyEvent.VK_A -> gameController.updateDirection(UserRobotDirection.MOVE_LEFT, state);
+            case KeyEvent.VK_S -> gameController.updateDirection(UserRobotDirection.MOVE_DOWN, state);
+            case KeyEvent.VK_D -> gameController.updateDirection(UserRobotDirection.MOVE_RIGHT, state);
         }
     }
 }

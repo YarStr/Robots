@@ -4,7 +4,7 @@ import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
 import gui.windows.InternalWindow;
 import gui.windows.WindowType;
 import logic.Dispatcher;
-import logic.game.GameField;
+import logic.game.GameController;
 import logic.game.RobotType;
 
 import javax.swing.*;
@@ -43,7 +43,7 @@ public class ScoreBoardWindow extends InternalWindow {
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(GameField.SCORE_CHANGED)) {
+        if (evt.getPropertyName().equals(GameController.SCORE_CHANGED)) {
             updateScore((RobotType) evt.getOldValue(), (Integer) evt.getNewValue());
             updateContent();
         } else {

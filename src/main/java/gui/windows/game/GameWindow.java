@@ -4,7 +4,7 @@ import gui.adapters.close.ConfirmCloseInternalFrameAdapter;
 import gui.windows.InternalWindow;
 import gui.windows.WindowType;
 import logic.Dispatcher;
-import logic.game.GameField;
+import logic.game.GameController;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -15,48 +15,48 @@ import java.util.ResourceBundle;
 
 public class GameWindow extends InternalWindow {
     private final Dispatcher dispatcher;
-    private final GameField gameField;
+    private final GameController gameController;
 
     private final JButton startButton;
     private final JButton zoomFocusButton;
 
-    public GameWindow(GameField gameField, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+    public GameWindow(GameController gameController, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
         super(WindowType.GAME, dispatcher, confirmCloseInternalFrameAdapter);
 
         this.dispatcher = dispatcher;
-        this.gameField = gameField;
-        this.gameField.addGameOverListener(this);
+        this.gameController = gameController;
+        this.gameController.addGameOverListener(this);
         startButton = getStartButton();
         zoomFocusButton = getZoomFocusButton();
 
-        setSize(gameField.getWidth(), gameField.getHeight());
-        addContentPanel(gameField);
+        setSize(gameController.getWidth(), gameController.getHeight());
+        addContentPanel(gameController);
         pack();
     }
 
     public void startGame() {
-        gameField.startGame();
+        gameController.startGame();
         this.startButton.setEnabled(false);
     }
 
-    private void addContentPanel(GameField gameField) {
-        JPanel contentPanel = getContentPanel(gameField);
+    private void addContentPanel(GameController gameController) {
+        JPanel contentPanel = getContentPanel(gameController);
         getContentPane().add(contentPanel);
     }
 
-    private JPanel getContentPanel(GameField gameField) {
+    private JPanel getContentPanel(GameController gameController) {
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPanel.setLayout(new BorderLayout());
 
-        contentPanel.add(getGameVisualiser(gameField), BorderLayout.CENTER);
+        contentPanel.add(getGameVisualiser(gameController), BorderLayout.CENTER);
         contentPanel.add(getButtonsPanel(), BorderLayout.SOUTH);
 
         return contentPanel;
     }
 
-    private GameVisualizer getGameVisualiser(GameField gameField) {
-        GameVisualizer gameVisualizer = new GameVisualizer(gameField);
+    private GameVisualizer getGameVisualiser(GameController gameController) {
+        GameVisualizer gameVisualizer = new GameVisualizer(gameController);
         gameVisualizer.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         return gameVisualizer;
     }
@@ -90,7 +90,7 @@ public class GameWindow extends InternalWindow {
                 new AbstractAction("Change zoom target") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        gameField.changeZoomTarget();
+                        gameController.changeZoomTarget();
                     }
                 }
         );
@@ -110,7 +110,7 @@ public class GameWindow extends InternalWindow {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(GameField.GAME_OVER)) {
+        if (evt.getPropertyName().equals(GameController.GAME_OVER)) {
             this.startButton.setEnabled(true);
         } else {
             super.propertyChange(evt);

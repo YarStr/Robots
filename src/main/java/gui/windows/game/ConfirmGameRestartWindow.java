@@ -2,7 +2,7 @@ package gui.windows.game;
 
 import gui.adapters.ConfirmationWindow;
 import logic.Dispatcher;
-import logic.game.GameField;
+import logic.game.GameController;
 import logic.game.RobotType;
 
 import java.beans.PropertyChangeEvent;
@@ -17,10 +17,10 @@ public class ConfirmGameRestartWindow implements ConfirmationWindow, PropertyCha
     private final GameWindow gameWindow;
 
 
-    public ConfirmGameRestartWindow(Dispatcher dispatcher, GameWindow gameWindow, GameField gameField) {
+    public ConfirmGameRestartWindow(Dispatcher dispatcher, GameWindow gameWindow, GameController gameController) {
         this.dispatcher = dispatcher;
         this.gameWindow = gameWindow;
-        gameField.addGameOverListener(this);
+        gameController.addGameOverListener(this);
     }
     @Override
     public Object[] getOptions(ResourceBundle bundle) {
@@ -42,7 +42,7 @@ public class ConfirmGameRestartWindow implements ConfirmationWindow, PropertyCha
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(GameField.GAME_OVER)) {
+        if (evt.getPropertyName().equals(GameController.GAME_OVER)) {
             ResourceBundle bundle = dispatcher.getBundle();
 
             RobotType winner = (RobotType) evt.getNewValue();

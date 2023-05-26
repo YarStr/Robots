@@ -7,7 +7,7 @@ import gui.menu.MenuBar;
 import gui.windows.LogWindow;
 import gui.windows.game.*;
 import logic.Dispatcher;
-import logic.game.GameField;
+import logic.game.GameController;
 import logic.log.Logger;
 
 import javax.swing.*;
@@ -25,20 +25,20 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
 
-    private final GameField gameField = new GameField(400, 400);
-    private final Dispatcher dispatcher = new Dispatcher(bundle, gameField);
+    private final GameController gameController = new GameController(400, 400);
+    private final Dispatcher dispatcher = new Dispatcher(bundle, gameController);
 
     private final ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dispatcher);
     private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dispatcher);
     private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dispatcher);
 
     private final MenuBar menuBar = new MenuBar(dispatcher, this);
-    private final GameWindow gameWindow = new GameWindow(gameField, dispatcher, confirmCloseInternalFrameAdapter);
+    private final GameWindow gameWindow = new GameWindow(gameController, dispatcher, confirmCloseInternalFrameAdapter);
     private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dispatcher, confirmCloseInternalFrameAdapter);
     private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dispatcher, confirmCloseInternalFrameAdapter);
     private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dispatcher, confirmCloseInternalFrameAdapter);
     private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dispatcher, confirmCloseInternalFrameAdapter);
-    private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dispatcher, gameWindow, gameField);
+    private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dispatcher, gameWindow, gameController);
 
     public MainApplicationFrame() {
         dispatcher.addInternalWindowPropertyChangeListener(this);
@@ -107,7 +107,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     protected ScoreBoardWindow createScoreBoardWindow() {
         scoreBoardWindow.setLocation(800, 10);
         scoreBoardWindow.setSize(240, 100);
-        gameField.addScoreChangeListener(scoreBoardWindow);
+        gameController.addScoreChangeListener(scoreBoardWindow);
         return scoreBoardWindow;
     }
 

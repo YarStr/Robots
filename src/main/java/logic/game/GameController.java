@@ -6,7 +6,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GameField {
+public class GameController {
     private static final int WIN_SCORE_POINTS = 5;
     private int width;
     private int height;
@@ -30,7 +30,7 @@ public class GameField {
 
     private final HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
 
-    public GameField(int width, int height) {
+    public GameController(int width, int height) {
         updateFieldSize(width, height);
         target = new Target(100, 100);
         enemyRobot = new EnemyRobot(0, 0, 45, 30, 10);
@@ -217,7 +217,7 @@ public class GameField {
     }
 
     private void pushBackUserRobot() {
-        int MIN_DISTANCE_BETWEEN_ROBOTS = 5;
+        int MIN_DISTANCE_BETWEEN_ROBOTS = 1;
 
         if (getUserRobotX() < getRobotEnemyX()) {
             int newX = getUserRobotX() - MIN_DISTANCE_BETWEEN_ROBOTS;

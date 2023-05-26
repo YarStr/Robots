@@ -1,7 +1,7 @@
 package logic;
 
 import logic.game.EnemyRobot;
-import logic.game.GameField;
+import logic.game.GameController;
 import logic.game.RobotType;
 import logic.game.UserRobot;
 
@@ -25,13 +25,13 @@ public class Dispatcher implements PropertyChangeListener {
     private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
 
     private ResourceBundle bundle;
-    private final GameField gameField;
+    private final GameController gameController;
 
-    public Dispatcher(ResourceBundle resourceBundle, GameField gameField) {
+    public Dispatcher(ResourceBundle resourceBundle, GameController gameController) {
         bundle = resourceBundle;
-        this.gameField = gameField;
-        this.gameField.userRobot.addDataChangeListener(this);
-        this.gameField.enemyRobot.addDataChangeListener(this);
+        this.gameController = gameController;
+        this.gameController.userRobot.addDataChangeListener(this);
+        this.gameController.enemyRobot.addDataChangeListener(this);
     }
 
     public ResourceBundle getBundle() {
@@ -85,19 +85,19 @@ public class Dispatcher implements PropertyChangeListener {
 
     private void changeLocationEnemyRobot(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(EnemyRobot.CHANGE_COORDINATES)) {
-            Point coordinatesRobot = new Point(gameField.getRobotEnemyX(), gameField.getRobotEnemyY());
+            Point coordinatesRobot = new Point(gameController.getRobotEnemyX(), gameController.getRobotEnemyY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_ENEMY_ROBOT, RobotType.ENEMY, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET,
-                    RobotType.ENEMY, gameField.enemyRobot.getDistanceToTarget(gameField.target));
+                    RobotType.ENEMY, gameController.enemyRobot.getDistanceToTarget(gameController.target));
         }
     }
 
     private void changeLocationUserRobot(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(UserRobot.CHANGE_COORDINATES)) {
-            Point coordinatesRobot = new Point(gameField.getUserRobotX(), gameField.getUserRobotY());
+            Point coordinatesRobot = new Point(gameController.getUserRobotX(), gameController.getUserRobotY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_USER_ROBOT, RobotType.USER, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET,
-                    RobotType.USER, gameField.userRobot.getDistanceToTarget(gameField.target));
+                    RobotType.USER, gameController.userRobot.getDistanceToTarget(gameController.target));
         }
     }
 }

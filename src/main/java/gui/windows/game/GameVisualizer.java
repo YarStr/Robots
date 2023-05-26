@@ -1,7 +1,7 @@
 package gui.windows.game;
 
 import gui.adapters.KeyPressAdapter;
-import logic.game.GameField;
+import logic.game.GameController;
 import logic.game.RobotType;
 
 import javax.swing.*;
@@ -20,13 +20,13 @@ public class GameVisualizer extends JPanel {
         return new Timer("events generator", true);
     }
 
-    private final GameField gameField;
+    private final GameController gameController;
 
     private double zoomLevel = 1;
 
 
-    public GameVisualizer(GameField gameField) {
-        this.gameField = gameField;
+    public GameVisualizer(GameController gameController) {
+        this.gameController = gameController;
 
         Timer m_timer = initTimer();
 
@@ -40,7 +40,7 @@ public class GameVisualizer extends JPanel {
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                gameField.onModelUpdateEvent();
+                gameController.onModelUpdateEvent();
             }
         }, 0, 10);
 
@@ -49,11 +49,11 @@ public class GameVisualizer extends JPanel {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                gameField.applyLimits(getWidth(), getHeight());
+                gameController.applyLimits(getWidth(), getHeight());
             }
         });
 
-        addKeyListener(new KeyPressAdapter(gameField));
+        addKeyListener(new KeyPressAdapter(gameController));
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -100,12 +100,12 @@ public class GameVisualizer extends JPanel {
         int userPositionX;
         int userPositionY;
 
-        if (gameField.getZoomTarget().equals(RobotType.ENEMY)) {
-            userPositionX = gameField.getRobotEnemyX();
-            userPositionY = gameField.getRobotEnemyY();
+        if (gameController.getZoomTarget().equals(RobotType.ENEMY)) {
+            userPositionX = gameController.getRobotEnemyX();
+            userPositionY = gameController.getRobotEnemyY();
         } else {
-            userPositionX = gameField.getUserRobotX();
-            userPositionY = gameField.getUserRobotY();
+            userPositionX = gameController.getUserRobotX();
+            userPositionY = gameController.getUserRobotY();
         }
 
         AffineTransform transform = new AffineTransform();
@@ -118,14 +118,14 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawRobotEnemy(Graphics2D graphics) {
-        int robotCenterX = gameField.getRobotEnemyX();
-        int robotCenterY = gameField.getRobotEnemyY();
-        int robotWidth = gameField.getRobotEnemyWidth();
-        int robotHeight = gameField.getRobotEnemyHeight();
-        double direction = gameField.getRobotEnemyDirection();
+        int robotCenterX = gameController.getRobotEnemyX();
+        int robotCenterY = gameController.getRobotEnemyY();
+        int robotWidth = gameController.getRobotEnemyWidth();
+        int robotHeight = gameController.getRobotEnemyHeight();
+        double direction = gameController.getRobotEnemyDirection();
 
         Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
-        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
+//        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
 
         enemyRenderGraphics.setColor(Color.BLUE);
         fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
@@ -138,10 +138,10 @@ public class GameVisualizer extends JPanel {
 
 
     private void drawUserRobot(Graphics2D graphics) {
-        int robotCenterX = gameField.getUserRobotX();
-        int robotCenterY = gameField.getUserRobotY();
-        int robotWidth = gameField.getUserRobotWidth();
-        int robotHeight = gameField.getUserRobotHeight();
+        int robotCenterX = gameController.getUserRobotX();
+        int robotCenterY = gameController.getUserRobotY();
+        int robotWidth = gameController.getUserRobotWidth();
+        int robotHeight = gameController.getUserRobotHeight();
 
         graphics.setColor(Color.MAGENTA);
         fillRect(graphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
@@ -151,8 +151,8 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawTarget(Graphics2D graphics) {
-        int x = gameField.getTargetX();
-        int y = gameField.getTargetY();
+        int x = gameController.getTargetX();
+        int y = gameController.getTargetY();
 
         graphics.setColor(Color.GREEN);
         fillOval(graphics, x, y, 5, 5);
