@@ -15,6 +15,7 @@ public class GameController {
     public final Target target;
 
     private int level = 1;
+
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
     public final UserRobot userRobot;
     public final ArrayList<Robot> dynamicRobots = new ArrayList<>();
@@ -204,9 +205,6 @@ public class GameController {
     }
 
     private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
-        System.out.println(enemyDistance);
-        System.out.println(userDistance);
-        System.out.println(" ");
         if (enemyDistance < 0.5) {
             return RobotType.ENEMY;
         }
@@ -231,7 +229,7 @@ public class GameController {
         return ThreadLocalRandom.current().nextInt(1, limit);
     }
 
-    // TODO сделать отображение координат у всех Роботов
+
     public int getRobotEnemyX() {
         return enemyRobots.get(0).getRoundedX();
     }
@@ -289,10 +287,6 @@ public class GameController {
                         ((UserRobot) robot1).HP -= 5;
                         System.out.println(((UserRobot) robot1).HP);
                     }
-//                    if(robot2 instanceof UserRobot){
-//                        ((UserRobot) robot2).HP -= 5;
-//                    }
-
                 }
             }
         }
