@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameController {
@@ -18,7 +19,7 @@ public class GameController {
 
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
     public final UserRobot userRobot;
-    public final ArrayList<Robot> dynamicRobots = new ArrayList<>();
+    public ArrayList<Robot> dynamicRobots = new ArrayList<>();
 
 
 
@@ -42,12 +43,12 @@ public class GameController {
     public GameController(int width, int height) {
         updateFieldSize(width, height);
         target = new Target(-100, -100);
-        updateEnemyRobotsAmount();
+//        updateEnemyRobotsAmount();
         userRobot = new UserRobot(-100, -100, 20, 20);
         userRobot.correctFieldSize(width, height);
 //        setEnemyRobots();
         dynamicRobots.add(userRobot);
-        dynamicRobots.addAll(enemyRobots);
+//        dynamicRobots.addAll(enemyRobots);
         updateUserRobotModel();
 //        setModelsOfRobots();
         setDirectionMove();
@@ -92,13 +93,15 @@ public class GameController {
             for (int i = 0; i < count; i++) {
                 enemyRobots.add(new EnemyRobot(-100, -100, 0, 10, 10));
             }
+
         }
         else {
             for (int i = 0; i < -count; i++) {
                 enemyRobots.remove(0);
             }
         }
-
+        dynamicRobots = new ArrayList<>(enemyRobots);
+        dynamicRobots.add(userRobot);
     }
 
     public void stopGame(RobotType winner) {
@@ -205,10 +208,10 @@ public class GameController {
     }
 
     private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
-        if (enemyDistance < 0.5) {
+        if (enemyDistance < 1) {
             return RobotType.ENEMY;
         }
-        if (userDistance < 0.5) {
+        if (userDistance < 1) {
             return RobotType.USER;
         }
         return null;

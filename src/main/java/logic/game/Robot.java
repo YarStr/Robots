@@ -1,5 +1,6 @@
 package logic.game;
 
+import java.awt.*;
 import java.beans.PropertyChangeSupport;
 
 public class Robot {
@@ -33,9 +34,13 @@ public class Robot {
     }
 
     public int getDistanceToTarget(Target target) {
+        Rectangle robot = new Rectangle((int) x, (int) y, robotWidth, robotHeight);
+        if (robot.contains(target.x, target.y)){
+            return 0;
+        }
         double diffX = getCenterX() - target.x;
         double diffY = getCenterY() - target.y;
-        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY)) - 10;
+        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY)) - robotHeight/2;
         return Math.max(distance, 0);
     }
 

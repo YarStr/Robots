@@ -3,6 +3,7 @@ package gui.windows.game;
 import gui.adapters.KeyPressAdapter;
 import logic.game.EnemyRobot;
 import logic.game.GameController;
+import logic.game.Robot;
 import logic.game.RobotType;
 import logic.game.UserRobot;
 
@@ -120,24 +121,27 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawRobotEnemy(Graphics2D graphics) {
-        for (EnemyRobot robot : gameController.enemyRobots) {
+        for (Robot robot : gameController.dynamicRobots) {
+            if(!(robot instanceof UserRobot)) {
 
-            int robotCenterX = robot.getRoundedX();
-            int robotCenterY = robot.getRoundedY();
-            int robotWidth = robot.robotWidth;
-            int robotHeight = robot.robotHeight;
-    //        double direction = robot.direction;
 
-            Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
-    //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
+                int robotCenterX = robot.getRoundedX();
+                int robotCenterY = robot.getRoundedY();
+                int robotWidth = robot.robotWidth;
+                int robotHeight = robot.robotHeight;
+                //        double direction = robot.direction;
 
-            enemyRenderGraphics.setColor(Color.BLUE);
-            fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+                Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
+                //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
 
-            enemyRenderGraphics.setColor(Color.BLACK);
-            drawRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+                enemyRenderGraphics.setColor(Color.BLUE);
+                fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
 
-            enemyRenderGraphics.dispose();
+                enemyRenderGraphics.setColor(Color.BLACK);
+                drawRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+
+                enemyRenderGraphics.dispose();
+            }
         }
     }
 
