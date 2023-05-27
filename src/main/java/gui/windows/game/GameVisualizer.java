@@ -1,8 +1,10 @@
 package gui.windows.game;
 
 import gui.adapters.KeyPressAdapter;
+import logic.game.EnemyRobot;
 import logic.game.GameController;
 import logic.game.RobotType;
+import logic.game.UserRobot;
 
 import javax.swing.*;
 import java.awt.*;
@@ -118,30 +120,34 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawRobotEnemy(Graphics2D graphics) {
-        int robotCenterX = gameController.getRobotEnemyX();
-        int robotCenterY = gameController.getRobotEnemyY();
-        int robotWidth = gameController.getRobotEnemyWidth();
-        int robotHeight = gameController.getRobotEnemyHeight();
-        double direction = gameController.getRobotEnemyDirection();
+        for (EnemyRobot robot : gameController.enemyRobots) {
 
-        Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
-//        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
+            int robotCenterX = robot.getRoundedX();
+            int robotCenterY = robot.getRoundedY();
+            int robotWidth = robot.robotWidth;
+            int robotHeight = robot.robotHeight;
+//            double direction = robot.direction;
 
-        enemyRenderGraphics.setColor(Color.BLUE);
-        fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+            Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
+    //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
 
-        enemyRenderGraphics.setColor(Color.BLACK);
-        drawRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+            enemyRenderGraphics.setColor(Color.BLUE);
+            fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
 
-        enemyRenderGraphics.dispose();
+            enemyRenderGraphics.setColor(Color.BLACK);
+            drawRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+
+            enemyRenderGraphics.dispose();
+        }
     }
 
 
     private void drawUserRobot(Graphics2D graphics) {
-        int robotCenterX = gameController.getUserRobotX();
-        int robotCenterY = gameController.getUserRobotY();
-        int robotWidth = gameController.getUserRobotWidth();
-        int robotHeight = gameController.getUserRobotHeight();
+        UserRobot userRobot = gameController.userRobot;
+        int robotCenterX = userRobot.getRoundedX();
+        int robotCenterY = userRobot.getRoundedY();
+        int robotWidth = userRobot.robotWidth;
+        int robotHeight = userRobot.robotHeight;
 
         graphics.setColor(Color.MAGENTA);
         fillRect(graphics, robotCenterX, robotCenterY, robotWidth, robotHeight);

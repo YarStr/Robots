@@ -3,6 +3,7 @@ package logic.game;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,7 +13,9 @@ public class GameController {
     private int height;
 
     public final Target target;
-    public final EnemyRobot enemyRobot;
+
+    public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
+
     public final UserRobot userRobot;
 
     private Rectangle modelUserRobot;
@@ -32,12 +35,19 @@ public class GameController {
 
     public GameController(int width, int height) {
         updateFieldSize(width, height);
-        target = new Target(100, 100);
-        enemyRobot = new EnemyRobot(0, 0, 45, 30, 10);
-        userRobot = new UserRobot(240, 200, 20, 20);
+        // TODO спавнить сущности изначально НЕ вне экрана
+        target = new Target(-100, -100);
+        setEnemyRobots();
+        userRobot = new UserRobot(-100, -100, 20, 20);
         userRobot.correctFieldSize(width, height);
-        setModelsOfRobots();
+//        setModelsOfRobots();
         setDirectionMove();
+    }
+
+    public void setEnemyRobots() {
+        for (int i = 0; i < 5; i++) {
+            enemyRobots.add(new EnemyRobot(-100, -100, 0, 10, 10));
+        }
     }
 
     private void setScore() {
@@ -62,6 +72,9 @@ public class GameController {
 
     public void startGame() {
         isGameOn = true;
+        changeTargetPosition(new Point(width / 2, height / 2));
+        setRandomEnemiesPosition();
+        setRandomUserPosition();
         setScore();
     }
 
@@ -81,10 +94,23 @@ public class GameController {
         target.y = point.y;
     }
 
+    public void setRandomEnemiesPosition() {
+        for (EnemyRobot robot : enemyRobots) {
+            robot.x = getRandomCoordinateWithLimit(width);
+            robot.y = getRandomCoordinateWithLimit(height);
+        }
+    }
+
+    public void setRandomUserPosition() {
+        userRobot.x = getRandomCoordinateWithLimit(width);
+        userRobot.y = getRandomCoordinateWithLimit(height);
+    }
+
     public void applyLimits(int updatedWidth, int updatedHeight) {
         updateFieldSize(updatedWidth, updatedHeight);
         target.correctPosition(width, height);
-        enemyRobot.correctPosition(width, height);
+        for (EnemyRobot enemyRobot : enemyRobots)
+            enemyRobot.correctPosition(width, height);
         userRobot.correctFieldSize(width, height);
     }
 
@@ -94,19 +120,21 @@ public class GameController {
 
     public void onModelUpdateEvent() {
         if (isGameOn) {
-            enemyRobot.turnToTarget(target);
-            enemyRobot.move(width, height);
+            for (EnemyRobot enemyRobot : enemyRobots) {
+                enemyRobot.turnToTarget(target);
+                enemyRobot.move(width, height);
+            }
             userRobot.move(directionMove);
 
-            setModelsOfRobots();
-            getIntersectsOfRobots();
+//            setModelsOfRobots();
+//            getIntersectsOfRobots();
 
             if (userRobot.XP == 0) {
                 stopGame(RobotType.ENEMY);
                 userRobot.XP = 100;
             }
 
-            double enemyDistance = enemyRobot.getDistanceToTarget(target);
+            double enemyDistance = getMinEnemyDistanceToTarget();
             double userDistance = userRobot.getDistanceToTarget(target);
 
             RobotType robotThatReachedTheTarget = getRobotThatReachedTheTarget(enemyDistance, userDistance);
@@ -114,12 +142,24 @@ public class GameController {
             if (robotThatReachedTheTarget != null) {
                 int scorePoints = score.get(robotThatReachedTheTarget) + 1;
                 setRobotScore(robotThatReachedTheTarget, scorePoints);
-                generateNewTarget();
 
                 if (scorePoints >= WIN_SCORE_POINTS)
                     stopGame(robotThatReachedTheTarget);
+                else
+                    generateNewTarget();
             }
         }
+    }
+
+    public double getMinEnemyDistanceToTarget() {
+        double distance = Double.MAX_VALUE;
+        for (EnemyRobot robot : enemyRobots) {
+            double robotDistance = robot.getDistanceToTarget(target);
+            if (robotDistance < distance) {
+                distance = robotDistance;
+            }
+        }
+        return distance;
     }
 
     private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
@@ -138,32 +178,36 @@ public class GameController {
     }
 
     private void generateNewTarget() {
-        int newX = ThreadLocalRandom.current().nextInt(1, width);
-        int newY = ThreadLocalRandom.current().nextInt(1, height);
-        Point point = new Point();
-        point.setLocation(newX, newY);
-        changeTargetPosition(point);
+        int newX = getRandomCoordinateWithLimit(width);
+        int newY = getRandomCoordinateWithLimit(height);
+        changeTargetPosition(new Point(newX, newY));
     }
 
+    private int getRandomCoordinateWithLimit(int limit) {
+        return ThreadLocalRandom.current().nextInt(1, limit);
+    }
+
+    // TODO сделать отображение координат у всех Роботов
     public int getRobotEnemyX() {
-        return enemyRobot.getRoundedX();
+        return enemyRobots.get(0).getRoundedX();
     }
 
     public int getRobotEnemyY() {
-        return enemyRobot.getRoundedY();
+        return enemyRobots.get(0).getRoundedY();
     }
 
-    public int getRobotEnemyWidth() {
-        return enemyRobot.robotWidth;
-    }
-
-    public int getRobotEnemyHeight() {
-        return enemyRobot.robotHeight;
-    }
-
-    public double getRobotEnemyDirection() {
-        return enemyRobot.direction;
-    }
+    // TODO устранить старые методы получения данных о Роботе
+//    public int getRobotEnemyWidth() {
+//        return enemyRobot.robotWidth;
+//    }
+//
+//    public int getRobotEnemyHeight() {
+//        return enemyRobot.robotHeight;
+//    }
+//
+//    public double getRobotEnemyDirection() {
+//        return enemyRobot.direction;
+//    }
 
     public int getTargetX() {
         return target.x;
@@ -181,13 +225,14 @@ public class GameController {
         return userRobot.getRoundedY();
     }
 
-    public int getUserRobotWidth() {
-        return userRobot.robotWidth;
-    }
-
-    public int getUserRobotHeight() {
-        return userRobot.robotHeight;
-    }
+    // TODO убрать устаревшие методы получения характеристик Робота
+//    public int getUserRobotWidth() {
+//        return userRobot.robotWidth;
+//    }
+//
+//    public int getUserRobotHeight() {
+//        return userRobot.robotHeight;
+//    }
 
     public int getWidth() {
         return width;
@@ -208,13 +253,13 @@ public class GameController {
         }
     }
 
-    public void getIntersectsOfRobots() {
-        if (modelUserRobot.intersects(modelEnemyRobot)) {
-            updateUserRobotXP();
-            pushBackUserRobot();
-//            System.out.println(userRobot.XP);
-        }
-    }
+//    public void getIntersectsOfRobots() {
+//        if (modelUserRobot.intersects(modelEnemyRobot)) {
+//            updateUserRobotXP();
+//            pushBackUserRobot();
+////            System.out.println(userRobot.XP);
+//        }
+//    }
 
     private void pushBackUserRobot() {
         int MIN_DISTANCE_BETWEEN_ROBOTS = 1;
@@ -241,11 +286,10 @@ public class GameController {
         userRobot.XP = newXP;
     }
 
-    private void setModelsOfRobots() {
-        modelUserRobot = new Rectangle(getUserRobotX(), getUserRobotY(),
-                userRobot.robotWidth, userRobot.robotHeight);
-        modelEnemyRobot = new Rectangle(getRobotEnemyX(), getRobotEnemyY(),
-                enemyRobot.robotWidth, enemyRobot.robotHeight);
-    }
-
+//    private void setModelsOfRobots() {
+//        modelUserRobot = new Rectangle(getUserRobotX(), getUserRobotY(),
+//                userRobot.robotWidth, userRobot.robotHeight);
+//        modelEnemyRobot = new Rectangle(getRobotEnemyX(), getRobotEnemyY(),
+//                enemyRobots.get(0).robotWidth, enemyRobots.get.robotHeight);
+//    }
 }

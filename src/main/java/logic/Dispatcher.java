@@ -31,7 +31,7 @@ public class Dispatcher implements PropertyChangeListener {
         bundle = resourceBundle;
         this.gameController = gameController;
         this.gameController.userRobot.addDataChangeListener(this);
-        this.gameController.enemyRobot.addDataChangeListener(this);
+        this.gameController.enemyRobots.get(0).addDataChangeListener(this);
     }
 
     public ResourceBundle getBundle() {
@@ -88,7 +88,7 @@ public class Dispatcher implements PropertyChangeListener {
             Point coordinatesRobot = new Point(gameController.getRobotEnemyX(), gameController.getRobotEnemyY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_ENEMY_ROBOT, RobotType.ENEMY, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET,
-                    RobotType.ENEMY, gameController.enemyRobot.getDistanceToTarget(gameController.target));
+                    RobotType.ENEMY, (int) gameController.getMinEnemyDistanceToTarget());
         }
     }
 
