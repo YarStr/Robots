@@ -8,12 +8,13 @@ import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameController {
-    private static final int WIN_SCORE_POINTS = 5;
+    private static final int WIN_SCORE_POINTS = 1;
     private int width;
     private int height;
 
     public final Target target;
 
+    private int level = 1;
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
 
     public final UserRobot userRobot;
@@ -25,6 +26,7 @@ public class GameController {
 
     public static String SCORE_CHANGED = "Score changed";
     public static String GAME_OVER = "Game over";
+    public static String LEVEL_CHANGED = "Level changed";
 
     private final PropertyChangeSupport scoreChangeDispatcher = new PropertyChangeSupport(this);
 
@@ -33,22 +35,17 @@ public class GameController {
 
     private final HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
 
+
     public GameController(int width, int height) {
         updateFieldSize(width, height);
-        // TODO спавнить сущности изначально НЕ вне экрана
         target = new Target(-100, -100);
-        setEnemyRobots();
+        updateEnemyRobotsAmount();
         userRobot = new UserRobot(-100, -100, 20, 20);
         userRobot.correctFieldSize(width, height);
 //        setModelsOfRobots();
         setDirectionMove();
     }
 
-    public void setEnemyRobots() {
-        for (int i = 0; i < 5; i++) {
-            enemyRobots.add(new EnemyRobot(-100, -100, 0, 10, 10));
-        }
-    }
 
     private void setScore() {
         for (RobotType robot : RobotType.values()) {
@@ -62,8 +59,9 @@ public class GameController {
         }
     }
 
-    public void addScoreChangeListener(PropertyChangeListener listener) {
+    public void addScoreAndLevelChangeListener(PropertyChangeListener listener) {
         scoreChangeDispatcher.addPropertyChangeListener(SCORE_CHANGED, listener);
+        scoreChangeDispatcher.addPropertyChangeListener(LEVEL_CHANGED, listener);
     }
 
     public void addGameOverListener(PropertyChangeListener listener) {
@@ -72,10 +70,28 @@ public class GameController {
 
     public void startGame() {
         isGameOn = true;
+
+        updateEnemyRobotsAmount();
+
         changeTargetPosition(new Point(width / 2, height / 2));
         setRandomEnemiesPosition();
         setRandomUserPosition();
         setScore();
+    }
+
+    private void updateEnemyRobotsAmount() {
+        int count = level - enemyRobots.size();
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
+                enemyRobots.add(new EnemyRobot(-100, -100, 0, 10, 10));
+            }
+        }
+        else {
+            for (int i = 0; i < -count; i++) {
+                enemyRobots.remove(0);
+            }
+        }
+
     }
 
     public void stopGame(RobotType winner) {
@@ -143,12 +159,27 @@ public class GameController {
                 int scorePoints = score.get(robotThatReachedTheTarget) + 1;
                 setRobotScore(robotThatReachedTheTarget, scorePoints);
 
-                if (scorePoints >= WIN_SCORE_POINTS)
+                if (scorePoints >= WIN_SCORE_POINTS) {
+                    updateLevel(robotThatReachedTheTarget);
                     stopGame(robotThatReachedTheTarget);
-                else
+                }
+                else {
                     generateNewTarget();
+                }
             }
         }
+    }
+
+    private void updateLevel(RobotType robotThatReachedTheTarget) {
+        switch (robotThatReachedTheTarget) {
+            case USER -> {
+                if (level < 5){
+                    level += 1;
+                }
+            }
+            case ENEMY -> level = 1;
+        }
+        scoreChangeDispatcher.firePropertyChange(LEVEL_CHANGED, null, level);
     }
 
     public double getMinEnemyDistanceToTarget() {
@@ -187,7 +218,6 @@ public class GameController {
         return ThreadLocalRandom.current().nextInt(1, limit);
     }
 
-    // TODO сделать отображение координат у всех Роботов
     public int getRobotEnemyX() {
         return enemyRobots.get(0).getRoundedX();
     }
@@ -195,19 +225,6 @@ public class GameController {
     public int getRobotEnemyY() {
         return enemyRobots.get(0).getRoundedY();
     }
-
-    // TODO устранить старые методы получения данных о Роботе
-//    public int getRobotEnemyWidth() {
-//        return enemyRobot.robotWidth;
-//    }
-//
-//    public int getRobotEnemyHeight() {
-//        return enemyRobot.robotHeight;
-//    }
-//
-//    public double getRobotEnemyDirection() {
-//        return enemyRobot.direction;
-//    }
 
     public int getTargetX() {
         return target.x;
@@ -224,15 +241,6 @@ public class GameController {
     public int getUserRobotY() {
         return userRobot.getRoundedY();
     }
-
-    // TODO убрать устаревшие методы получения характеристик Робота
-//    public int getUserRobotWidth() {
-//        return userRobot.robotWidth;
-//    }
-//
-//    public int getUserRobotHeight() {
-//        return userRobot.robotHeight;
-//    }
 
     public int getWidth() {
         return width;
@@ -256,7 +264,7 @@ public class GameController {
 //    public void getIntersectsOfRobots() {
 //        if (modelUserRobot.intersects(modelEnemyRobot)) {
 //            updateUserRobotXP();
-//            pushBackUserRobot();
+////            pushBackUserRobot();
 ////            System.out.println(userRobot.XP);
 //        }
 //    }

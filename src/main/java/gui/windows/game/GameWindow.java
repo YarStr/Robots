@@ -20,6 +20,8 @@ public class GameWindow extends InternalWindow {
     private final JButton startButton;
     private final JButton zoomFocusButton;
 
+    private final JProgressBar userHPBar;
+
     public GameWindow(GameController gameController, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
         super(WindowType.GAME, dispatcher, confirmCloseInternalFrameAdapter);
 
@@ -28,10 +30,21 @@ public class GameWindow extends InternalWindow {
         this.gameController.addGameOverListener(this);
         startButton = getStartButton();
         zoomFocusButton = getZoomFocusButton();
+        userHPBar = getUserHPBar();
 
         setSize(gameController.getWidth(), gameController.getHeight());
         addContentPanel(gameController);
         pack();
+    }
+
+    private JProgressBar getUserHPBar() {
+        JProgressBar bar = new JProgressBar(0, 100);
+
+        bar.setValue(100);
+        bar.setString(dispatcher.getBundle().getString("gameWindow.HP"));
+        bar.setStringPainted(true);
+
+        return bar;
     }
 
     public void startGame() {
@@ -49,6 +62,7 @@ public class GameWindow extends InternalWindow {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPanel.setLayout(new BorderLayout());
 
+        contentPanel.add(userHPBar, BorderLayout.NORTH);
         contentPanel.add(getGameVisualiser(gameController), BorderLayout.CENTER);
         contentPanel.add(getButtonsPanel(), BorderLayout.SOUTH);
 
@@ -79,7 +93,7 @@ public class GameWindow extends InternalWindow {
                     }
                 }
         );
-        button.setText(dispatcher.getBundle().getString("startGame.text"));
+        button.setText(dispatcher.getBundle().getString("gameWindow.startGameText"));
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.CENTER);
         return button;
@@ -95,7 +109,7 @@ public class GameWindow extends InternalWindow {
                 }
         );
         button.setFocusable(false);
-        button.setText(dispatcher.getBundle().getString("changeZoomTarget.text"));
+        button.setText(dispatcher.getBundle().getString("gameWindow.changeZoomTargetText"));
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.CENTER);
         return button;
@@ -103,8 +117,9 @@ public class GameWindow extends InternalWindow {
 
     @Override
     protected void updateBundleResources(ResourceBundle bundle) {
-        startButton.setText(bundle.getString("startGame.text"));
-        zoomFocusButton.setText(bundle.getString("changeZoomTarget.text"));
+        startButton.setText(bundle.getString("gameWindow.startGameText"));
+        zoomFocusButton.setText(bundle.getString("gameWindow.changeZoomTargetText"));
+        userHPBar.setString(bundle.getString("gameWindow.HP"));
         super.updateBundleResources(bundle);
     }
 

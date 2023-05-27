@@ -54,8 +54,13 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     }
 
     private void setLook() {
+        setColorConstants();
         setNameAndTitle();
         setDefaultTheme();
+    }
+
+    private void setColorConstants() {
+        UIManager.put("nimbusOrange", new Color(38, 139, 210));
     }
 
     private void setCloseAndStateRecoveryOperations() {
@@ -106,19 +111,19 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
     protected ScoreBoardWindow createScoreBoardWindow() {
         scoreBoardWindow.setLocation(800, 10);
-        scoreBoardWindow.setSize(240, 100);
-        gameController.addScoreChangeListener(scoreBoardWindow);
+        scoreBoardWindow.setSize(240, 120);
+        gameController.addScoreAndLevelChangeListener(scoreBoardWindow);
         return scoreBoardWindow;
     }
 
     protected RobotCoordinatesWindow createRobotCoordinatesWindow() {
-        robotCoordinatesWindow.setLocation(800, 130);
+        robotCoordinatesWindow.setLocation(800, 150);
         robotCoordinatesWindow.setSize(240, 100);
         return robotCoordinatesWindow;
     }
 
     protected DistanceToTargetWindow createDistanceToTargetWindow(){
-        distanceToTargetWindow.setLocation(800, 250);
+        distanceToTargetWindow.setLocation(800, 270);
         distanceToTargetWindow.setSize(240, 100);
         return distanceToTargetWindow;
     }

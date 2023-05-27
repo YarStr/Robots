@@ -126,7 +126,7 @@ public class GameVisualizer extends JPanel {
             int robotCenterY = robot.getRoundedY();
             int robotWidth = robot.robotWidth;
             int robotHeight = robot.robotHeight;
-//            double direction = robot.direction;
+    //        double direction = robot.direction;
 
             Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
     //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
