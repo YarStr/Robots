@@ -2,11 +2,8 @@ package logic.game;
 
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
-public class EnemyRobot {
-    public volatile double x;
-    public volatile double y;
+public class EnemyRobot extends Robot{
 
     public volatile double direction;
 
@@ -17,19 +14,15 @@ public class EnemyRobot {
 
     public double velocity = maxVelocity;
     public double angularVelocity = 0;
-    public volatile int robotWidth;
-    public volatile int robotHeight;
+
 
     public static String CHANGE_COORDINATES = "coordinates  of enemy robot changed";
-    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
+
 
 
     public EnemyRobot(double x, double y, double direction, int robotWidth, int robotHeight) {
-        this.x = x;
-        this.y = y;
+        super(x, y, robotWidth, robotHeight);
         this.direction = direction;
-        this.robotWidth = robotWidth;
-        this.robotHeight = robotHeight;
     }
 
     public void turnToTarget(Target target) {
@@ -81,7 +74,9 @@ public class EnemyRobot {
     private void updateCoordinates() {
         double newX = x + velocity * duration * Math.cos(direction);
         double newY = y + velocity * duration * Math.sin(direction);
+        lastX = x;
         x = newX;
+        lastY = y;
         y = newY;
     }
 
@@ -100,22 +95,7 @@ public class EnemyRobot {
         return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
     }
 
-    public double applyLimits(double value, double max) {
-        double zero_value = 0;
-        return Math.min(Math.max(value, zero_value), max);
-    }
 
-    public int getRoundedX() {
-        return round(x);
-    }
-
-    public int getRoundedY() {
-        return round(y);
-    }
-
-    public int round(double value) {
-        return (int) (value + 0.5);
-    }
 
     public int getDistanceToTarget(Target target) {
         double diffX = x - target.x;
