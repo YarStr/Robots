@@ -15,10 +15,12 @@ public class GameController {
     public final Target target;
 
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
-
     public final UserRobot userRobot;
+    public final ArrayList<Robot> dynamicRobots = new ArrayList<>();
 
-    private Rectangle modelUserRobot;
+
+
+    private Rectangle modelUserRobot = new Rectangle();
     private Rectangle modelEnemyRobot;
 
     private RobotType zoomTarget = RobotType.USER;
@@ -37,9 +39,12 @@ public class GameController {
         updateFieldSize(width, height);
         // TODO спавнить сущности изначально НЕ вне экрана
         target = new Target(-100, -100);
-        setEnemyRobots();
         userRobot = new UserRobot(-100, -100, 20, 20);
         userRobot.correctFieldSize(width, height);
+        setEnemyRobots();
+        dynamicRobots.add(userRobot);
+        dynamicRobots.addAll(enemyRobots);
+        updateUserRobotModel();
 //        setModelsOfRobots();
         setDirectionMove();
     }
@@ -120,18 +125,17 @@ public class GameController {
 
     public void onModelUpdateEvent() {
         if (isGameOn) {
+            userRobot.move(directionMove);
+            getIntersectsOfRobots(userRobot);
             for (EnemyRobot enemyRobot : enemyRobots) {
                 enemyRobot.turnToTarget(target);
                 enemyRobot.move(width, height);
+                getIntersectsOfRobots(enemyRobot);
             }
-            userRobot.move(directionMove);
 
-//            setModelsOfRobots();
-//            getIntersectsOfRobots();
-
-            if (userRobot.XP == 0) {
+            if (userRobot.HP == 0) {
                 stopGame(RobotType.ENEMY);
-                userRobot.XP = 100;
+                userRobot.HP = 100;
             }
 
             double enemyDistance = getMinEnemyDistanceToTarget();
@@ -151,6 +155,11 @@ public class GameController {
         }
     }
 
+    private void updateUserRobotModel() {
+        modelUserRobot.x = getUserRobotX();
+        modelUserRobot.y = getUserRobotY();
+    }
+
     public double getMinEnemyDistanceToTarget() {
         double distance = Double.MAX_VALUE;
         for (EnemyRobot robot : enemyRobots) {
@@ -163,7 +172,7 @@ public class GameController {
     }
 
     private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
-        if (enemyDistance < 0.5) {
+        if (enemyDistance < 3) {
             return RobotType.ENEMY;
         }
         if (userDistance < 0.5) {
@@ -196,19 +205,6 @@ public class GameController {
         return enemyRobots.get(0).getRoundedY();
     }
 
-    // TODO устранить старые методы получения данных о Роботе
-//    public int getRobotEnemyWidth() {
-//        return enemyRobot.robotWidth;
-//    }
-//
-//    public int getRobotEnemyHeight() {
-//        return enemyRobot.robotHeight;
-//    }
-//
-//    public double getRobotEnemyDirection() {
-//        return enemyRobot.direction;
-//    }
-
     public int getTargetX() {
         return target.x;
     }
@@ -224,15 +220,6 @@ public class GameController {
     public int getUserRobotY() {
         return userRobot.getRoundedY();
     }
-
-    // TODO убрать устаревшие методы получения характеристик Робота
-//    public int getUserRobotWidth() {
-//        return userRobot.robotWidth;
-//    }
-//
-//    public int getUserRobotHeight() {
-//        return userRobot.robotHeight;
-//    }
 
     public int getWidth() {
         return width;
@@ -253,43 +240,26 @@ public class GameController {
         }
     }
 
-//    public void getIntersectsOfRobots() {
-//        if (modelUserRobot.intersects(modelEnemyRobot)) {
-//            updateUserRobotXP();
-//            pushBackUserRobot();
-////            System.out.println(userRobot.XP);
-//        }
-//    }
+    private void getIntersectsOfRobots(Robot robot1){
+        Rectangle modelOfRobot1 = new Rectangle(robot1.getRoundedX(), robot1.getRoundedY(),
+                robot1.robotWidth, robot1.robotHeight);
+        for (Robot robot2: dynamicRobots) {
+            if (robot1 != robot2){
+                Rectangle modelOfRobot2 = new Rectangle(robot2.getRoundedX(), robot2.getRoundedY(),
+                        robot2.robotWidth, robot2.robotHeight);
+                if (modelOfRobot1.intersects(modelOfRobot2)) {
+                    robot1.x = robot1.lastX;
+                    robot1.y = robot1.lastY;
+                    if(robot1 instanceof UserRobot){
+                        ((UserRobot) robot1).HP -= 5;
+                        System.out.println(((UserRobot) robot1).HP);
+                    }
+//                    if(robot2 instanceof UserRobot){
+//                        ((UserRobot) robot2).HP -= 5;
+//                    }
 
-    private void pushBackUserRobot() {
-        int MIN_DISTANCE_BETWEEN_ROBOTS = 1;
-
-        if (getUserRobotX() < getRobotEnemyX()) {
-            int newX = getUserRobotX() - MIN_DISTANCE_BETWEEN_ROBOTS;
-            userRobot.x = newX;
-        } else {
-            int newX = getUserRobotX() + MIN_DISTANCE_BETWEEN_ROBOTS;
-            userRobot.x = newX;
-        }
-        if (getUserRobotY() < getRobotEnemyY()) {
-            int newY = getUserRobotY() - MIN_DISTANCE_BETWEEN_ROBOTS;
-            userRobot.y = newY;
-        } else {
-            int newY = getUserRobotY() + MIN_DISTANCE_BETWEEN_ROBOTS;
-            userRobot.y = newY;
+                }
+            }
         }
     }
-
-    private void updateUserRobotXP() {
-        int newXP = userRobot.XP - 5;
-        System.out.println(newXP);
-        userRobot.XP = newXP;
-    }
-
-//    private void setModelsOfRobots() {
-//        modelUserRobot = new Rectangle(getUserRobotX(), getUserRobotY(),
-//                userRobot.robotWidth, userRobot.robotHeight);
-//        modelEnemyRobot = new Rectangle(getRobotEnemyX(), getRobotEnemyY(),
-//                enemyRobots.get(0).robotWidth, enemyRobots.get.robotHeight);
-//    }
 }

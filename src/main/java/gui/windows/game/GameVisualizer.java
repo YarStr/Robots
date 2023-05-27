@@ -161,25 +161,25 @@ public class GameVisualizer extends JPanel {
         int y = gameController.getTargetY();
 
         graphics.setColor(Color.GREEN);
-        fillOval(graphics, x, y, 5, 5);
+        fillOval(graphics, x, y, 8, 8);
 
         graphics.setColor(Color.BLACK);
-        drawOval(graphics, x, y, 5, 5);
+        drawOval(graphics, x, y, 8, 8);
     }
 
     private static void fillOval(Graphics graphics, int centerX, int centerY, int diam1, int diam2) {
-        graphics.fillOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
+        graphics.fillOval(centerX, centerY, diam1, diam2);
     }
 
     private static void drawOval(Graphics graphics, int centerX, int centerY, int diam1, int diam2) {
-        graphics.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
+        graphics.drawOval(centerX, centerY, diam1, diam2);
     }
 
     private static void fillRect(Graphics graphics, int centerX, int centerY, int width, int height) {
-        graphics.fillRect(centerX - width / 2, centerY - height / 2, width, height);
+        graphics.fillRect(centerX, centerY, width, height);
     }
 
     private static void drawRect(Graphics graphics, int centerX, int centerY, int width, int height) {
-        graphics.drawRect(centerX - width / 2, centerY - height / 2, width, height);
+        graphics.drawRect(centerX, centerY, width, height);
     }
 }

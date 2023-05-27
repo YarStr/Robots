@@ -1,31 +1,18 @@
 package logic.game;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 
-public class UserRobot {
+public class UserRobot extends Robot{
     private final double velocity = 1;
-    public volatile int XP = 100;
+    public int HP = 100;
 
-    public volatile double fieldWidth;
-    public volatile double fieldHeight;
-
-    public volatile double x;
-    public volatile double y;
-
-    public volatile int robotWidth;
-    public volatile int robotHeight;
 
     public static String CHANGE_COORDINATES = "coordinates  of user robot changed";
-    private final PropertyChangeSupport propChangeDispatcher = new PropertyChangeSupport(this);
 
 
     public UserRobot(double x, double y, int robotWidth, int robotHeight) {
-        this.x = x;
-        this.y = y;
-        this.robotWidth = robotWidth;
-        this.robotHeight = robotHeight;
+        super(x, y, robotWidth, robotHeight);
     }
 
 
@@ -49,21 +36,25 @@ public class UserRobot {
 
     public void goRight() {
         double newX = x + velocity;
+        lastX = x;
         x = newX;
     }
 
     public void goLeft() {
-        double newX = x - velocity;
+        double newX = this.x - velocity;
+        lastX = x;
         x = newX;
     }
 
     public void goForward() {
-        double newY = y - velocity;
+        double newY = this.y - velocity;
+        lastY = y;
         y = newY;
     }
 
     public void goDown() {
-        double newY = y + velocity;
+        double newY = this.y + velocity;
+        lastY = y;
         y = newY;
     }
 
@@ -77,35 +68,6 @@ public class UserRobot {
             double newY = applyLimits(y, fieldHeight);
             y = newY;
         }
-    }
-
-    public double applyLimits(double value, double max) {
-        double zero_value = 0;
-        return Math.min(Math.max(value, zero_value), max);
-    }
-
-    public void correctFieldSize(int width, int height) {
-        this.fieldWidth = width;
-        this.fieldHeight = height;
-    }
-
-    public int getDistanceToTarget(Target target) {
-        double diffX = x - target.x;
-        double diffY = y - target.y;
-        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY)) - 10;
-        return Math.max(distance, 0);
-    }
-
-    public int getRoundedX() {
-        return round(x);
-    }
-
-    public int getRoundedY() {
-        return round(y);
-    }
-
-    public int round(double value) {
-        return (int) (value + 0.5);
     }
 
     public void addDataChangeListener(PropertyChangeListener listener) {
