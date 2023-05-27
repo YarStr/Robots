@@ -172,7 +172,10 @@ public class GameController {
     }
 
     private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
-        if (enemyDistance < 3) {
+        System.out.println(enemyDistance);
+        System.out.println(userDistance);
+        System.out.println(" ");
+        if (enemyDistance < 0.5) {
             return RobotType.ENEMY;
         }
         if (userDistance < 0.5) {

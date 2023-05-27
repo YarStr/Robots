@@ -96,14 +96,6 @@ public class EnemyRobot extends Robot{
     }
 
 
-
-    public int getDistanceToTarget(Target target) {
-        double diffX = x - target.x;
-        double diffY = y - target.y;
-        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY));
-        return Math.max(distance, 0);
-    }
-
     public void addDataChangeListener(PropertyChangeListener listener) {
         propChangeDispatcher.addPropertyChangeListener(CHANGE_COORDINATES, listener);
     }

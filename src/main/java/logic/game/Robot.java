@@ -33,8 +33,8 @@ public class Robot {
     }
 
     public int getDistanceToTarget(Target target) {
-        double diffX = x - target.x;
-        double diffY = y - target.y;
+        double diffX = getCenterX() - target.x;
+        double diffY = getCenterY() - target.y;
         int distance = round(Math.sqrt(diffX * diffX + diffY * diffY)) - 10;
         return Math.max(distance, 0);
     }
@@ -49,5 +49,13 @@ public class Robot {
 
     public int getRoundedY() {
         return round(y);
+    }
+
+    public int getCenterX() {
+        return getRoundedX() + robotWidth / 2;
+    }
+
+    public int getCenterY() {
+        return getRoundedY() + robotHeight / 2;
     }
 }
