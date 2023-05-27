@@ -161,10 +161,10 @@ public class GameVisualizer extends JPanel {
         int y = gameController.getTargetY();
 
         graphics.setColor(Color.GREEN);
-        fillOval(graphics, x, y, 8, 8);
+        fillOval(graphics, x, y, 4, 4);
 
         graphics.setColor(Color.BLACK);
-        drawOval(graphics, x, y, 8, 8);
+        drawOval(graphics, x, y, 4, 4);
     }
 
     private static void fillOval(Graphics graphics, int centerX, int centerY, int diam1, int diam2) {
