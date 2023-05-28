@@ -127,7 +127,11 @@ public class GameWindow extends InternalWindow {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(GameController.GAME_OVER)) {
             this.startButton.setEnabled(true);
-        } else {
+        } else if (evt.getPropertyName().equals(GameController.HP_CHANGED)) {
+            int newHP = (Integer) evt.getNewValue();
+            userHPBar.setValue(newHP);
+        }
+        else {
             super.propertyChange(evt);
         }
     }

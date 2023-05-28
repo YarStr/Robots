@@ -3,7 +3,7 @@ package logic.game;
 
 import java.beans.PropertyChangeListener;
 
-public class EnemyRobot extends Robot{
+public class EnemyRobot extends Robot {
 
     public volatile double direction;
 

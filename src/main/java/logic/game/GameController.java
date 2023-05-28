@@ -5,10 +5,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameController {
+    public static final String HP_CHANGED = "HP changed";
     private static final int WIN_SCORE_POINTS = 1;
     private int width;
     private int height;
@@ -22,9 +22,7 @@ public class GameController {
     public ArrayList<Robot> dynamicRobots = new ArrayList<>();
 
 
-
     private Rectangle modelUserRobot = new Rectangle();
-    private Rectangle modelEnemyRobot;
 
     private RobotType zoomTarget = RobotType.USER;
 
@@ -46,11 +44,9 @@ public class GameController {
 //        updateEnemyRobotsAmount();
         userRobot = new UserRobot(-100, -100, 20, 20);
         userRobot.correctFieldSize(width, height);
-//        setEnemyRobots();
         dynamicRobots.add(userRobot);
 //        dynamicRobots.addAll(enemyRobots);
         updateUserRobotModel();
-//        setModelsOfRobots();
         setDirectionMove();
     }
 
@@ -74,13 +70,12 @@ public class GameController {
 
     public void addGameOverListener(PropertyChangeListener listener) {
         scoreChangeDispatcher.addPropertyChangeListener(GAME_OVER, listener);
+        scoreChangeDispatcher.addPropertyChangeListener(HP_CHANGED, listener);
     }
 
     public void startGame() {
         isGameOn = true;
-
         updateEnemyRobotsAmount();
-
         changeTargetPosition(new Point(width / 2, height / 2));
         setRandomEnemiesPosition();
         setRandomUserPosition();
@@ -94,8 +89,7 @@ public class GameController {
                 enemyRobots.add(new EnemyRobot(-100, -100, 0, 10, 10));
             }
 
-        }
-        else {
+        } else {
             for (int i = 0; i < -count; i++) {
                 enemyRobots.remove(0);
             }
@@ -154,7 +148,7 @@ public class GameController {
                 getIntersectsOfRobots(enemyRobot);
             }
 
-            if (userRobot.HP == 0) {
+            if (userRobot.HP <= 0) {
                 stopGame(RobotType.ENEMY);
                 userRobot.HP = 100;
             }
@@ -171,8 +165,7 @@ public class GameController {
                 if (scorePoints >= WIN_SCORE_POINTS) {
                     updateLevel(robotThatReachedTheTarget);
                     stopGame(robotThatReachedTheTarget);
-                }
-                else {
+                } else {
                     generateNewTarget();
                 }
             }
@@ -182,7 +175,7 @@ public class GameController {
     private void updateLevel(RobotType robotThatReachedTheTarget) {
         switch (robotThatReachedTheTarget) {
             case USER -> {
-                if (level < 5){
+                if (level < 5) {
                     level += 1;
                 }
             }
@@ -276,19 +269,19 @@ public class GameController {
         }
     }
 
-    private void getIntersectsOfRobots(Robot robot1){
+    private void getIntersectsOfRobots(Robot robot1) {
         Rectangle modelOfRobot1 = new Rectangle(robot1.getRoundedX(), robot1.getRoundedY(),
                 robot1.robotWidth, robot1.robotHeight);
-        for (Robot robot2: dynamicRobots) {
-            if (robot1 != robot2){
+        for (Robot robot2 : dynamicRobots) {
+            if (robot1 != robot2) {
                 Rectangle modelOfRobot2 = new Rectangle(robot2.getRoundedX(), robot2.getRoundedY(),
                         robot2.robotWidth, robot2.robotHeight);
                 if (modelOfRobot1.intersects(modelOfRobot2)) {
                     robot1.x = robot1.lastX;
                     robot1.y = robot1.lastY;
-                    if(robot1 instanceof UserRobot){
-                        ((UserRobot) robot1).HP -= 5;
-                        System.out.println(((UserRobot) robot1).HP);
+                    if (robot1 instanceof UserRobot) {
+                        ((UserRobot) robot1).HP -= 1;
+                        scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot1).HP);
                     }
                 }
             }

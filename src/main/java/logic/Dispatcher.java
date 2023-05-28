@@ -31,7 +31,7 @@ public class Dispatcher implements PropertyChangeListener {
         bundle = resourceBundle;
         this.gameController = gameController;
         this.gameController.userRobot.addDataChangeListener(this);
-//        this.gameController.enemyRobot.addDataChangeListener(this);
+//        this.gameController.enemyRobots.get(0).addDataChangeListener(this);
     }
 
     public ResourceBundle getBundle() {
