@@ -41,19 +41,19 @@ public class UserRobot extends Robot{
     }
 
     public void goLeft() {
-        double newX = this.x - velocity;
+        double newX = x - velocity;
         lastX = x;
         x = newX;
     }
 
     public void goForward() {
-        double newY = this.y - velocity;
+        double newY = y - velocity;
         lastY = y;
         y = newY;
     }
 
     public void goDown() {
-        double newY = this.y + velocity;
+        double newY = y + velocity;
         lastY = y;
         y = newY;
     }
@@ -69,6 +69,7 @@ public class UserRobot extends Robot{
             y = newY;
         }
     }
+
 
     public void addDataChangeListener(PropertyChangeListener listener) {
         propChangeDispatcher.addPropertyChangeListener(CHANGE_COORDINATES, listener);

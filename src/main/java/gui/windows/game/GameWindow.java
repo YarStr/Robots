@@ -32,7 +32,7 @@ public class GameWindow extends InternalWindow {
         zoomFocusButton = getZoomFocusButton();
         userHPBar = getUserHPBar();
 
-        setSize(gameController.getWidth(), gameController.getHeight());
+        setSize(gameController.getWidth(), gameController.getHeightField());
         addContentPanel(gameController);
         pack();
     }

@@ -10,8 +10,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GameController {
     public static final String HP_CHANGED = "HP changed";
     private static final int WIN_SCORE_POINTS = 1;
-    private int width;
-    private int height;
+    private int widthField;
+
+    private int heightField;
 
     public final Target target;
 
@@ -19,10 +20,10 @@ public class GameController {
 
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
     public final UserRobot userRobot;
-    public ArrayList<Robot> dynamicRobots = new ArrayList<>();
+//    public ArrayList<Robot> dynamicRobots = new ArrayList<>();
 
 
-    private Rectangle modelUserRobot = new Rectangle();
+//    private Rectangle modelUserRobot = new Rectangle();
 
     private RobotType zoomTarget = RobotType.USER;
 
@@ -38,15 +39,13 @@ public class GameController {
     private final HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
 
 
-    public GameController(int width, int height) {
-        updateFieldSize(width, height);
+    public GameController(int width, int heightField) {
+        updateFieldSize(width, heightField);
         target = new Target(-100, -100);
 //        updateEnemyRobotsAmount();
         userRobot = new UserRobot(-100, -100, 20, 20);
-        userRobot.correctFieldSize(width, height);
-        dynamicRobots.add(userRobot);
-//        dynamicRobots.addAll(enemyRobots);
-        updateUserRobotModel();
+        userRobot.correctFieldSize(width, heightField);
+//        updateUserRobotModel();
         setDirectionMove();
     }
 
@@ -76,7 +75,7 @@ public class GameController {
     public void startGame() {
         isGameOn = true;
         updateEnemyRobotsAmount();
-        changeTargetPosition(new Point(width / 2, height / 2));
+        changeTargetPosition(new Point(widthField / 2, heightField / 2));
         setRandomEnemiesPosition();
         setRandomUserPosition();
         setScore();
@@ -94,8 +93,6 @@ public class GameController {
                 enemyRobots.remove(0);
             }
         }
-        dynamicRobots = new ArrayList<>(enemyRobots);
-        dynamicRobots.add(userRobot);
     }
 
     public void stopGame(RobotType winner) {
@@ -105,8 +102,8 @@ public class GameController {
     }
 
     public void updateFieldSize(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.widthField = width;
+        this.heightField = height;
     }
 
     public void changeTargetPosition(Point point) {
@@ -116,22 +113,22 @@ public class GameController {
 
     public void setRandomEnemiesPosition() {
         for (EnemyRobot robot : enemyRobots) {
-            robot.x = getRandomCoordinateWithLimit(width);
-            robot.y = getRandomCoordinateWithLimit(height);
+            robot.x = getRandomCoordinateWithLimit(widthField);
+            robot.y = getRandomCoordinateWithLimit(heightField);
         }
     }
 
     public void setRandomUserPosition() {
-        userRobot.x = getRandomCoordinateWithLimit(width);
-        userRobot.y = getRandomCoordinateWithLimit(height);
+        userRobot.x = getRandomCoordinateWithLimit(widthField);
+        userRobot.y = getRandomCoordinateWithLimit(heightField);
     }
 
     public void applyLimits(int updatedWidth, int updatedHeight) {
         updateFieldSize(updatedWidth, updatedHeight);
-        target.correctPosition(width, height);
+        target.correctPosition(widthField, heightField);
         for (EnemyRobot enemyRobot : enemyRobots)
-            enemyRobot.correctPosition(width, height);
-        userRobot.correctFieldSize(width, height);
+            enemyRobot.correctPosition(widthField, heightField);
+        userRobot.correctFieldSize(widthField, heightField);
     }
 
     public void updateDirection(UserRobotDirection direction, Boolean state) {
@@ -144,7 +141,7 @@ public class GameController {
             getIntersectsOfRobots(userRobot);
             for (EnemyRobot enemyRobot : enemyRobots) {
                 enemyRobot.turnToTarget(target);
-                enemyRobot.move(width, height);
+                enemyRobot.move(widthField, heightField);
                 getIntersectsOfRobots(enemyRobot);
             }
 
@@ -184,10 +181,10 @@ public class GameController {
         scoreChangeDispatcher.firePropertyChange(LEVEL_CHANGED, null, level);
     }
 
-    private void updateUserRobotModel() {
-        modelUserRobot.x = getUserRobotX();
-        modelUserRobot.y = getUserRobotY();
-    }
+//    private void updateUserRobotModel() {
+//        modelUserRobot.x = getUserRobotX();
+//        modelUserRobot.y = getUserRobotY();
+//    }
 
     public double getMinEnemyDistanceToTarget() {
         double distance = Double.MAX_VALUE;
@@ -197,14 +194,15 @@ public class GameController {
                 distance = robotDistance;
             }
         }
+        System.out.println(distance);
         return distance;
     }
 
     private RobotType getRobotThatReachedTheTarget(double enemyDistance, double userDistance) {
-        if (enemyDistance < 1) {
+        if (enemyDistance < 0.5) {
             return RobotType.ENEMY;
         }
-        if (userDistance < 1) {
+        if (userDistance < 0.5) {
             return RobotType.USER;
         }
         return null;
@@ -216,8 +214,8 @@ public class GameController {
     }
 
     private void generateNewTarget() {
-        int newX = getRandomCoordinateWithLimit(width);
-        int newY = getRandomCoordinateWithLimit(height);
+        int newX = getRandomCoordinateWithLimit(widthField);
+        int newY = getRandomCoordinateWithLimit(heightField);
         changeTargetPosition(new Point(newX, newY));
     }
 
@@ -251,11 +249,11 @@ public class GameController {
     }
 
     public int getWidth() {
-        return width;
+        return widthField;
     }
 
-    public int getHeight() {
-        return height;
+    public int getHeightField() {
+        return heightField;
     }
 
     public RobotType getZoomTarget() {
@@ -272,6 +270,8 @@ public class GameController {
     private void getIntersectsOfRobots(Robot robot1) {
         Rectangle modelOfRobot1 = new Rectangle(robot1.getRoundedX(), robot1.getRoundedY(),
                 robot1.robotWidth, robot1.robotHeight);
+        ArrayList<Robot> dynamicRobots = new ArrayList<>(enemyRobots);
+        dynamicRobots.add(userRobot);
         for (Robot robot2 : dynamicRobots) {
             if (robot1 != robot2) {
                 Rectangle modelOfRobot2 = new Rectangle(robot2.getRoundedX(), robot2.getRoundedY(),
@@ -282,6 +282,10 @@ public class GameController {
                     if (robot1 instanceof UserRobot) {
                         ((UserRobot) robot1).HP -= 1;
                         scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot1).HP);
+                    }
+                    if (robot2 instanceof UserRobot) {
+                        ((UserRobot) robot2).HP -= 1;
+                        scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot2).HP);
                     }
                 }
             }

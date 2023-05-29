@@ -121,27 +121,25 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawRobotEnemy(Graphics2D graphics) {
-        for (Robot robot : gameController.dynamicRobots) {
-            if(!(robot instanceof UserRobot)) {
+        for (Robot robot : gameController.enemyRobots) {
 
+            int robotCenterX = robot.getRoundedX();
+            int robotCenterY = robot.getRoundedY();
+            int robotWidth = robot.robotWidth;
+            int robotHeight = robot.robotHeight;
+            //        double direction = robot.direction;
 
-                int robotCenterX = robot.getRoundedX();
-                int robotCenterY = robot.getRoundedY();
-                int robotWidth = robot.robotWidth;
-                int robotHeight = robot.robotHeight;
-                //        double direction = robot.direction;
+            Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
+            //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
 
-                Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
-                //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
+            enemyRenderGraphics.setColor(Color.BLUE);
+            fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
 
-                enemyRenderGraphics.setColor(Color.BLUE);
-                fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+            enemyRenderGraphics.setColor(Color.BLACK);
+            drawRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
 
-                enemyRenderGraphics.setColor(Color.BLACK);
-                drawRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+            enemyRenderGraphics.dispose();
 
-                enemyRenderGraphics.dispose();
-            }
         }
     }
 

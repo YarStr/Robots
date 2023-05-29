@@ -34,15 +34,13 @@ public class Robot {
     }
 
     public int getDistanceToTarget(Target target) {
-        Rectangle robot = new Rectangle((int) x, (int) y, robotWidth, robotHeight);
-        if (robot.contains(target.x, target.y)){
-            return 0;
-        }
-        double diffX = getCenterX() - target.x;
-        double diffY = getCenterY() - target.y;
-        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY)) - robotHeight/2;
-        return Math.max(distance, 0);
+        double diffX = (getCenterX() + robotWidth/2) - target.x;
+        double diffY = (getCenterY() + robotHeight/2) - target.y;
+        int distance = round(Math.sqrt(diffX * diffX + diffY * diffY));
+        return Math.max(distance, 0) - robotWidth/2;
     }
+
+
 
     public int round(double value) {
         return (int) (value + 0.5);
@@ -57,10 +55,10 @@ public class Robot {
     }
 
     public int getCenterX() {
-        return getRoundedX() + robotWidth / 2;
+        return getRoundedX();
     }
 
     public int getCenterY() {
-        return getRoundedY() + robotHeight / 2;
+        return getRoundedY();
     }
 }
