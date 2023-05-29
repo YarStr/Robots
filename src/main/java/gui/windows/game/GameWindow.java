@@ -5,6 +5,7 @@ import gui.windows.InternalWindow;
 import gui.windows.WindowType;
 import logic.Dispatcher;
 import logic.game.GameController;
+import tempPackage.Drawer;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -22,9 +23,12 @@ public class GameWindow extends InternalWindow {
 
     private final JProgressBar userHPBar;
 
+    private final Drawer drawer;
+
     public GameWindow(GameController gameController,
                       Dispatcher dispatcher,
-                      ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+                      ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter,
+                      Drawer drawer) {
         super(WindowType.GAME, dispatcher, confirmCloseInternalFrameAdapter);
 
         this.dispatcher = dispatcher;
@@ -33,6 +37,8 @@ public class GameWindow extends InternalWindow {
         startButton = getStartButton();
         zoomFocusButton = getZoomFocusButton();
         userHPBar = getUserHPBar();
+
+        this.drawer = drawer;
 
         setSize(gameController.getWidth(), gameController.getHeightField());
         addContentPanel(gameController);
@@ -72,7 +78,7 @@ public class GameWindow extends InternalWindow {
     }
 
     private GameVisualizer getGameVisualiser(GameController gameController) {
-        GameVisualizer gameVisualizer = new GameVisualizer(gameController);
+        GameVisualizer gameVisualizer = new GameVisualizer(gameController, drawer);
         gameVisualizer.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         return gameVisualizer;
     }

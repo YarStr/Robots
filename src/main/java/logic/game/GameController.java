@@ -19,7 +19,7 @@ public class GameController {
     private int level = 1;
 
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
-    public final UserRobot userRobot;
+    public final Robot userRobot;
 
     private RobotType zoomTarget = RobotType.USER;
 
@@ -35,11 +35,11 @@ public class GameController {
     private final HashMap<UserRobotDirection, Boolean> directionMove = new HashMap<>();
 
 
-    public GameController(int width, int heightField) {
-        updateFieldSize(width, heightField);
+    public GameController(int width, int height, Robot robot) {
+        updateFieldSize(width, height);
         target = new Target(-100, -100);
-        userRobot = new UserRobot(-100, -100, 20, 20);
-        userRobot.correctFieldSize(width, heightField);
+        userRobot = robot;
+        userRobot.correctFieldSize(width, height);
         setDirectionMove();
     }
 
@@ -269,11 +269,11 @@ public class GameController {
                     robot1.x = robot1.lastX;
                     robot1.y = robot1.lastY;
                     if (robot1 instanceof UserRobot) {
-                        ((UserRobot) robot1).HP -= 1;
+                        robot1.HP -= 1;
                         scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot1).HP);
                     }
                     if (robot2 instanceof UserRobot) {
-                        ((UserRobot) robot2).HP -= 1;
+                        robot2.HP -= 1;
                         scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot2).HP);
                     }
                 }

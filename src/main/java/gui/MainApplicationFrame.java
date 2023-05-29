@@ -8,7 +8,10 @@ import gui.windows.LogWindow;
 import gui.windows.game.*;
 import logic.Dispatcher;
 import logic.game.GameController;
+import logic.game.UserRobot;
 import logic.log.Logger;
+import tempPackage.NewDrawer;
+import tempPackage.Plugin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,24 +26,29 @@ import java.util.ResourceBundle;
 public class MainApplicationFrame extends JFrame implements PropertyChangeListener {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
+    private Plugin plugin;
+
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
 
-    private final GameController gameController = new GameController(400, 400);
-    private final Dispatcher dispatcher = new Dispatcher(bundle, gameController);
+    private GameController gameController;
+    private Dispatcher dispatcher;
 
-    private final ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dispatcher);
-    private final ConfirmCloseWindowAdapter confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dispatcher);
-    private final ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dispatcher);
+    private ConfirmStateRecoveryAdapter confirmStateRecoveryAdapter;
+    private ConfirmCloseWindowAdapter confirmCloseWindowAdapter;
+    private ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter;
 
-    private final MenuBar menuBar = new MenuBar(dispatcher, this);
-    private final GameWindow gameWindow = new GameWindow(gameController, dispatcher, confirmCloseInternalFrameAdapter);
-    private final LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), dispatcher, confirmCloseInternalFrameAdapter);
-    private final ScoreBoardWindow scoreBoardWindow = new ScoreBoardWindow(dispatcher, confirmCloseInternalFrameAdapter);
-    private final RobotCoordinatesWindow robotCoordinatesWindow = new RobotCoordinatesWindow(dispatcher, confirmCloseInternalFrameAdapter);
-    private final DistanceToTargetWindow distanceToTargetWindow = new DistanceToTargetWindow(dispatcher, confirmCloseInternalFrameAdapter);
-    private final ConfirmGameRestartWindow confirmGameRestartWindow = new ConfirmGameRestartWindow(dispatcher, gameWindow, gameController);
+
+    private MenuBar menuBar;
+    private GameWindow gameWindow;
+    private LogWindow logWindow;
+    private ScoreBoardWindow scoreBoardWindow;
+    private RobotCoordinatesWindow robotCoordinatesWindow;
+    private DistanceToTargetWindow distanceToTargetWindow;
+    private ConfirmGameRestartWindow confirmGameRestartWindow;
+
 
     public MainApplicationFrame() {
+        initializeEverything();
         dispatcher.addInternalWindowPropertyChangeListener(this);
         initializeContent();
         setLook();
@@ -52,6 +60,30 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
         addWorkingWindows();
         setJMenuBar(menuBar);
     }
+
+    // TODO декомпозировать
+    private void initializeEverything() {
+        // TODO читать аргументы из jar'а
+        plugin = new Plugin(new UserRobot(-100, -100, 20, 20), new NewDrawer());
+
+        gameController = new GameController(400, 400, plugin.robot());
+        dispatcher = new Dispatcher(bundle, gameController);
+
+        confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dispatcher);
+        confirmCloseWindowAdapter = new ConfirmCloseWindowAdapter(dispatcher);
+        confirmCloseInternalFrameAdapter = new ConfirmCloseInternalFrameAdapter(dispatcher);
+
+        menuBar = new MenuBar(dispatcher, this);
+
+        gameWindow = new GameWindow(gameController, dispatcher, confirmCloseInternalFrameAdapter, plugin.drawer());
+
+        logWindow = new LogWindow(Logger.getDefaultLogSource(), dispatcher, confirmCloseInternalFrameAdapter);
+        scoreBoardWindow = new ScoreBoardWindow(dispatcher, confirmCloseInternalFrameAdapter);
+        robotCoordinatesWindow = new RobotCoordinatesWindow(dispatcher, confirmCloseInternalFrameAdapter);
+        distanceToTargetWindow = new DistanceToTargetWindow(dispatcher, confirmCloseInternalFrameAdapter);
+        confirmGameRestartWindow = new ConfirmGameRestartWindow(dispatcher, gameWindow, gameController);
+    }
+
 
     private void setLook() {
         setColorConstants();

@@ -4,7 +4,7 @@ import gui.adapters.KeyPressAdapter;
 import logic.game.GameController;
 import logic.game.Robot;
 import logic.game.RobotType;
-import logic.game.UserRobot;
+import tempPackage.Drawer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,9 +26,12 @@ public class GameVisualizer extends JPanel {
 
     private double zoomLevel = 1;
 
+    private Drawer drawer;
 
-    public GameVisualizer(GameController gameController) {
+
+    public GameVisualizer(GameController gameController, Drawer drawer) {
         this.gameController = gameController;
+        this.drawer = drawer;
 
         Timer m_timer = initTimer();
 
@@ -126,10 +129,8 @@ public class GameVisualizer extends JPanel {
             int robotCenterY = robot.getRoundedY();
             int robotWidth = robot.robotWidth;
             int robotHeight = robot.robotHeight;
-            //        double direction = robot.direction;
 
             Graphics2D enemyRenderGraphics = (Graphics2D) graphics.create();
-            //        enemyRenderGraphics.rotate(direction, robotCenterX, robotCenterY);
 
             enemyRenderGraphics.setColor(Color.BLUE);
             fillRect(enemyRenderGraphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
@@ -143,17 +144,13 @@ public class GameVisualizer extends JPanel {
     }
 
     private void drawUserRobot(Graphics2D graphics) {
-        UserRobot userRobot = gameController.userRobot;
+        Robot userRobot = gameController.userRobot;
         int robotCenterX = userRobot.getRoundedX();
         int robotCenterY = userRobot.getRoundedY();
         int robotWidth = userRobot.robotWidth;
         int robotHeight = userRobot.robotHeight;
 
-        graphics.setColor(Color.MAGENTA);
-        fillRect(graphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
-
-        graphics.setColor(Color.BLACK);
-        drawRect(graphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
+        drawer.draw(graphics, robotCenterX, robotCenterY, robotWidth, robotHeight);
     }
 
     private void drawTarget(Graphics2D graphics) {

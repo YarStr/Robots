@@ -1,11 +1,14 @@
 package logic.game;
 
-import java.awt.*;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.HashMap;
 
 public class Robot {
     public volatile double x;
     public volatile double y;
+
+    public int HP = 100;
 
     public double lastX;
     public double lastY;
@@ -40,8 +43,6 @@ public class Robot {
         return Math.max(distance, 0) - robotWidth/2;
     }
 
-
-
     public int round(double value) {
         return (int) (value + 0.5);
     }
@@ -60,5 +61,11 @@ public class Robot {
 
     public int getCenterY() {
         return getRoundedY();
+    }
+
+    public void move(HashMap<UserRobotDirection, Boolean> directionMove) {
+    }
+
+    public void addDataChangeListener(PropertyChangeListener propertyChangeListener) {
     }
 }
