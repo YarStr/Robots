@@ -3,10 +3,9 @@ package logic.game;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 
-public class UserRobot extends Robot{
+public class UserRobot extends Robot {
     private final double velocity = 1;
     public int HP = 100;
-
 
     public static String CHANGE_COORDINATES = "coordinates  of user robot changed";
 

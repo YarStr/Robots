@@ -20,10 +20,6 @@ public class GameController {
 
     public final ArrayList<EnemyRobot> enemyRobots = new ArrayList<>();
     public final UserRobot userRobot;
-//    public ArrayList<Robot> dynamicRobots = new ArrayList<>();
-
-
-//    private Rectangle modelUserRobot = new Rectangle();
 
     private RobotType zoomTarget = RobotType.USER;
 
@@ -42,10 +38,8 @@ public class GameController {
     public GameController(int width, int heightField) {
         updateFieldSize(width, heightField);
         target = new Target(-100, -100);
-//        updateEnemyRobotsAmount();
         userRobot = new UserRobot(-100, -100, 20, 20);
         userRobot.correctFieldSize(width, heightField);
-//        updateUserRobotModel();
         setDirectionMove();
     }
 
@@ -180,11 +174,6 @@ public class GameController {
         }
         scoreChangeDispatcher.firePropertyChange(LEVEL_CHANGED, null, level);
     }
-
-//    private void updateUserRobotModel() {
-//        modelUserRobot.x = getUserRobotX();
-//        modelUserRobot.y = getUserRobotY();
-//    }
 
     public double getMinEnemyDistanceToTarget() {
         double distance = Double.MAX_VALUE;

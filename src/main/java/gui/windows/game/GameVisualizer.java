@@ -1,7 +1,6 @@
 package gui.windows.game;
 
 import gui.adapters.KeyPressAdapter;
-import logic.game.EnemyRobot;
 import logic.game.GameController;
 import logic.game.Robot;
 import logic.game.RobotType;
@@ -142,7 +141,6 @@ public class GameVisualizer extends JPanel {
 
         }
     }
-
 
     private void drawUserRobot(Graphics2D graphics) {
         UserRobot userRobot = gameController.userRobot;

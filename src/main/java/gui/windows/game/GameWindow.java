@@ -22,7 +22,9 @@ public class GameWindow extends InternalWindow {
 
     private final JProgressBar userHPBar;
 
-    public GameWindow(GameController gameController, Dispatcher dispatcher, ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
+    public GameWindow(GameController gameController,
+                      Dispatcher dispatcher,
+                      ConfirmCloseInternalFrameAdapter confirmCloseInternalFrameAdapter) {
         super(WindowType.GAME, dispatcher, confirmCloseInternalFrameAdapter);
 
         this.dispatcher = dispatcher;
@@ -130,8 +132,7 @@ public class GameWindow extends InternalWindow {
         } else if (evt.getPropertyName().equals(GameController.HP_CHANGED)) {
             int newHP = (Integer) evt.getNewValue();
             userHPBar.setValue(newHP);
-        }
-        else {
+        } else {
             super.propertyChange(evt);
         }
     }
