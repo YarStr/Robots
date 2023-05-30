@@ -25,9 +25,6 @@ public class EnemyRobot extends Robot {
 
     public void turnToTarget(Target target) {
         double angleToTarget = getAngleToTarget(x + robotHeight/2, y + robotWidth/2, target.x, target.y);
-//        double newAngle = asNormalizedRadians(angleToTarget - direction);
-//        updateAngularVelocity(angleToTarget);
-//        angle = newAngle;
         direction = angleToTarget;
     }
 
@@ -37,28 +34,9 @@ public class EnemyRobot extends Robot {
         return asNormalizedRadians(Math.atan2(diffY, diffX));
     }
 
-//    private void updateAngularVelocity(double angleToTarget) {
-//        if (Math.abs(direction - angleToTarget) < 10e-7) {
-//            angularVelocity = 0;
-//        } else if (direction >= Math.PI) {
-//            if (direction - Math.PI < angleToTarget && angleToTarget < direction)
-//                angularVelocity = -maxAngularVelocity;
-//            else
-//                angularVelocity = maxAngularVelocity;
-//        } else {
-//            if (direction < angleToTarget && angleToTarget < direction + Math.PI)
-//                angularVelocity = maxAngularVelocity;
-//            else
-//                angularVelocity = -maxAngularVelocity;
-//        }
-//    }
-
     public void move(int width, int height) {
-//        updateVelocity();
-//        updateDirection();
         updateCoordinates();
         correctPosition(width, height);
-//        propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.ENEMY);
     }
 
 
