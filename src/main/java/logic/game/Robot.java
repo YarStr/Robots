@@ -36,9 +36,9 @@ public class Robot {
         fieldHeight = height;
     }
 
-    public int getDistanceToTarget(Target target) {
-        double diffX = (getCenterX() + robotWidth/2) - target.x;
-        double diffY = (getCenterY() + robotHeight/2) - target.y;
+    public int getDistanceToTarget(int targetX, int targetY) {
+        double diffX = (getCenterX() + robotWidth/2) - targetX;
+        double diffY = (getCenterY() + robotHeight/2) - targetY;
         int distance = round(Math.sqrt(diffX * diffX + diffY * diffY));
         return Math.max(distance, 0) - robotWidth/2;
     }

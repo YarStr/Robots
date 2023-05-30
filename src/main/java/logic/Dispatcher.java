@@ -88,7 +88,7 @@ public class Dispatcher implements PropertyChangeListener {
             Point coordinatesRobot = new Point(gameController.getRobotEnemyX(), gameController.getRobotEnemyY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_ENEMY_ROBOT, RobotType.ENEMY, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET,
-                    RobotType.ENEMY, gameController.enemyRobots.get(0).getDistanceToTarget(gameController.target));
+                    RobotType.ENEMY, gameController.enemyRobots.get(0).getDistanceToTarget(gameController.target.x, gameController.target.y));
         }
     }
 
@@ -97,7 +97,7 @@ public class Dispatcher implements PropertyChangeListener {
             Point coordinatesRobot = new Point(gameController.getUserRobotX(), gameController.getUserRobotY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_USER_ROBOT, RobotType.USER, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET,
-                    RobotType.USER, gameController.userRobot.getDistanceToTarget(gameController.target));
+                    RobotType.USER, gameController.userRobot.getDistanceToTarget(gameController.target.x, gameController.target.y));
         }
     }
 }

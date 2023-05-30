@@ -8,10 +8,8 @@ import gui.windows.LogWindow;
 import gui.windows.game.*;
 import logic.Dispatcher;
 import logic.game.GameController;
-import logic.game.UserRobot;
 import logic.log.Logger;
-import tempPackage.NewDrawer;
-import tempPackage.Plugin;
+import tempPackage.MyPlugin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +24,7 @@ import java.util.ResourceBundle;
 public class MainApplicationFrame extends JFrame implements PropertyChangeListener {
     private final JDesktopPane desktopPane = new JDesktopPane();
 
-    private Plugin plugin;
+    private MyPlugin plugin;
 
     private ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru"));
 
@@ -64,9 +62,9 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
     // TODO декомпозировать
     private void initializeEverything() {
         // TODO читать аргументы из jar'а
-        plugin = new Plugin(new UserRobot(-100, -100, 20, 20), new NewDrawer());
+//        plugin = new MyPlugin(new UserRobot(-100, -100, 20, 20), new StandardDrawer());
 
-        gameController = new GameController(400, 400, plugin.robot());
+        gameController = new GameController(400, 400, plugin.getRobot());
         dispatcher = new Dispatcher(bundle, gameController);
 
         confirmStateRecoveryAdapter = new ConfirmStateRecoveryAdapter(dispatcher);
@@ -75,7 +73,7 @@ public class MainApplicationFrame extends JFrame implements PropertyChangeListen
 
         menuBar = new MenuBar(dispatcher, this);
 
-        gameWindow = new GameWindow(gameController, dispatcher, confirmCloseInternalFrameAdapter, plugin.drawer());
+        gameWindow = new GameWindow(gameController, dispatcher, confirmCloseInternalFrameAdapter, plugin.getDrawer());
 
         logWindow = new LogWindow(Logger.getDefaultLogSource(), dispatcher, confirmCloseInternalFrameAdapter);
         scoreBoardWindow = new ScoreBoardWindow(dispatcher, confirmCloseInternalFrameAdapter);

@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GameController {
     public static final String HP_CHANGED = "HP changed";
-    private static final int WIN_SCORE_POINTS = 1;
+    private static final int WIN_SCORE_POINTS = 5;
     private int widthField;
 
     private int heightField;
@@ -73,6 +73,7 @@ public class GameController {
         setRandomEnemiesPosition();
         setRandomUserPosition();
         setScore();
+
     }
 
     private void updateEnemyRobotsAmount() {
@@ -142,10 +143,11 @@ public class GameController {
             if (userRobot.HP <= 0) {
                 stopGame(RobotType.ENEMY);
                 userRobot.HP = 100;
+                scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, userRobot.HP);
             }
 
             double enemyDistance = getMinEnemyDistanceToTarget();
-            double userDistance = userRobot.getDistanceToTarget(target);
+            double userDistance = userRobot.getDistanceToTarget(target.x, target.y);
 
             RobotType robotThatReachedTheTarget = getRobotThatReachedTheTarget(enemyDistance, userDistance);
 
@@ -178,12 +180,11 @@ public class GameController {
     public double getMinEnemyDistanceToTarget() {
         double distance = Double.MAX_VALUE;
         for (EnemyRobot robot : enemyRobots) {
-            double robotDistance = robot.getDistanceToTarget(target);
+            double robotDistance = robot.getDistanceToTarget(target.x, target.y);
             if (robotDistance < distance) {
                 distance = robotDistance;
             }
         }
-        System.out.println(distance);
         return distance;
     }
 
@@ -270,11 +271,11 @@ public class GameController {
                     robot1.y = robot1.lastY;
                     if (robot1 instanceof UserRobot) {
                         robot1.HP -= 1;
-                        scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot1).HP);
+                        scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, robot1.HP);
                     }
                     if (robot2 instanceof UserRobot) {
                         robot2.HP -= 1;
-                        scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, ((UserRobot) robot2).HP);
+                        scoreChangeDispatcher.firePropertyChange(HP_CHANGED, null, robot2.HP);
                     }
                 }
             }

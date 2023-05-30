@@ -1,6 +1,9 @@
 package tempPackage;
 
-import logic.game.Robot;
 
-public record Plugin(Robot robot, Drawer drawer) {
+public interface Plugin {
+    public void invoke();
+
+    public void init(PluginContext context);
 }
+
