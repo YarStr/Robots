@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GameController {
     public static final String HP_CHANGED = "HP changed";
+    public static String CHANGE_ENEMY_COORDINATES = "coordinates  of enemy robot changed";
     private static final int WIN_SCORE_POINTS = 1;
     private int widthField;
 
@@ -64,6 +65,10 @@ public class GameController {
     public void addGameOverListener(PropertyChangeListener listener) {
         scoreChangeDispatcher.addPropertyChangeListener(GAME_OVER, listener);
         scoreChangeDispatcher.addPropertyChangeListener(HP_CHANGED, listener);
+    }
+
+    public void addEnemyPositionChangedListener(PropertyChangeListener listener) {
+        scoreChangeDispatcher.addPropertyChangeListener(CHANGE_ENEMY_COORDINATES, listener);
     }
 
     public void startGame() {
@@ -177,13 +182,20 @@ public class GameController {
 
     public double getMinEnemyDistanceToTarget() {
         double distance = Double.MAX_VALUE;
-        for (EnemyRobot robot : enemyRobots) {
+        int minDistanceRobotIndex = 0;
+
+        for (int i = 0; i < enemyRobots.size(); i++) {
+            EnemyRobot robot = enemyRobots.get(i);
             double robotDistance = robot.getDistanceToTarget(target);
             if (robotDistance < distance) {
                 distance = robotDistance;
+                minDistanceRobotIndex = i;
             }
         }
-        System.out.println(distance);
+
+        scoreChangeDispatcher.firePropertyChange(
+                CHANGE_ENEMY_COORDINATES,  enemyRobots.get(minDistanceRobotIndex), RobotType.ENEMY
+        );
         return distance;
     }
 

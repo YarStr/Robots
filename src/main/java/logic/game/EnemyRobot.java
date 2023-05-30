@@ -1,8 +1,6 @@
 package logic.game;
 
 
-import java.beans.PropertyChangeListener;
-
 public class EnemyRobot extends Robot {
 
     public volatile double direction;
@@ -16,7 +14,7 @@ public class EnemyRobot extends Robot {
     public double angularVelocity = 0;
 
 
-    public static String CHANGE_COORDINATES = "coordinates  of enemy robot changed";
+
 
 
 
@@ -60,7 +58,7 @@ public class EnemyRobot extends Robot {
 //        updateDirection();
         updateCoordinates();
         correctPosition(width, height);
-        propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.ENEMY);
+//        propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.ENEMY);
     }
 
 
@@ -98,8 +96,4 @@ public class EnemyRobot extends Robot {
         return (angle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
     }
 
-
-    public void addDataChangeListener(PropertyChangeListener listener) {
-        propChangeDispatcher.addPropertyChangeListener(CHANGE_COORDINATES, listener);
-    }
 }
