@@ -2,7 +2,7 @@ package logic;
 
 import logic.game.EnemyRobot;
 import logic.game.GameController;
-import logic.game.UserRobot;
+import ru.robot.interfaces.Robot;
 import ru.robot.interfaces.RobotType;
 
 import java.awt.*;
@@ -87,13 +87,13 @@ public class Dispatcher implements PropertyChangeListener {
         if (evt.getPropertyName().equals(GameController.CHANGE_ENEMY_COORDINATES)) {
             Point coordinatesRobot = new Point(gameController.getRobotEnemyX(), gameController.getRobotEnemyY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_ENEMY_ROBOT, RobotType.ENEMY, coordinatesRobot);
-            propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET;
-                    RobotType.ENEMY, ((EnemyRobot) evt.getOldValue()).getDistanceToTarget(gameController.target));
+            propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_ENEMY_ROBOT_TO_TARGET,
+                    RobotType.ENEMY, ((EnemyRobot) evt.getOldValue()).getDistanceToTarget(gameController.target.x, gameController.target.y));
         }
     }
 
     private void changeLocationUserRobot(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(UserRobot.CHANGE_COORDINATES)) {
+        if (evt.getPropertyName().equals(Robot.CHANGE_COORDINATES)) {
             Point coordinatesRobot = new Point(gameController.getUserRobotX(), gameController.getUserRobotY());
             propChangeDispatcher.firePropertyChange(UPDATE_COORDINATES_USER_ROBOT, RobotType.USER, coordinatesRobot);
             propChangeDispatcher.firePropertyChange(UPDATE_DISTANCE_FROM_USER_ROBOT_TO_TARGET,

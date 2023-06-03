@@ -2,6 +2,7 @@ package logic.game;
 
 import ru.robot.interfaces.Robot;
 import ru.robot.interfaces.RobotType;
+import ru.robot.interfaces.UserRobot;
 import ru.robot.interfaces.UserRobotDirection;
 
 import java.awt.*;
@@ -192,7 +193,7 @@ public class GameController {
 
         for (int i = 0; i < enemyRobots.size(); i++) {
             EnemyRobot robot = enemyRobots.get(i);
-            double robotDistance = robot.getDistanceToTarget(target);
+            double robotDistance = robot.getDistanceToTarget(target.x, target.y);
             if (robotDistance < distance) {
                 distance = robotDistance;
                 minDistanceRobotIndex = i;

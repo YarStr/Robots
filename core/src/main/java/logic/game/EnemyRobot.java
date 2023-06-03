@@ -2,9 +2,6 @@ package logic.game;
 
 
 import ru.robot.interfaces.Robot;
-import ru.robot.interfaces.RobotType;
-
-import java.beans.PropertyChangeListener;
 
 public class EnemyRobot extends Robot {
 
@@ -19,17 +16,13 @@ public class EnemyRobot extends Robot {
     public double angularVelocity = 0;
 
 
-
-
-
-
     public EnemyRobot(double x, double y, double direction, int robotWidth, int robotHeight) {
         super(x, y, robotWidth, robotHeight);
         this.direction = direction;
     }
 
     public void turnToTarget(Target target) {
-        double angleToTarget = getAngleToTarget(x + robotHeight/2, y + robotWidth/2, target.x, target.y);
+        double angleToTarget = getAngleToTarget(x + robotHeight / 2, y + robotWidth / 2, target.x, target.y);
         direction = angleToTarget;
     }
 
@@ -43,7 +36,6 @@ public class EnemyRobot extends Robot {
         updateCoordinates();
         correctPosition(width, height);
     }
-
 
 
     private void updateVelocity() {

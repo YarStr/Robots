@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 
-public abstract class Robot {
+public abstract class Robot implements UserRobot {
     public volatile double x;
     public volatile double y;
 

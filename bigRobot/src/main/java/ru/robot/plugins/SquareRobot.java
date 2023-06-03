@@ -19,19 +19,15 @@ public class SquareRobot extends Robot {
     public void move(HashMap<UserRobotDirection, Boolean> directionMove) {
         if (directionMove.get(UserRobotDirection.MOVE_UP)) {
             goForward();
-            goLeft();
         }
         if (directionMove.get(UserRobotDirection.MOVE_DOWN)) {
             goDown();
-            goRight();
         }
         if (directionMove.get(UserRobotDirection.MOVE_LEFT)) {
             goLeft();
-            goDown();
         }
         if (directionMove.get(UserRobotDirection.MOVE_RIGHT)) {
             goRight();
-            goForward();
         }
         correctPosition();
         propChangeDispatcher.firePropertyChange(CHANGE_COORDINATES, null, RobotType.USER);

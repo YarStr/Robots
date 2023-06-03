@@ -34,6 +34,7 @@ public class GameWindow extends InternalWindow {
         this.dispatcher = dispatcher;
         this.gameController = gameController;
         this.gameController.addGameOverListener(this);
+        this.gameController.addEnemyPositionChangedListener(dispatcher);
         startButton = getStartButton();
         zoomFocusButton = getZoomFocusButton();
         userHPBar = getUserHPBar();
